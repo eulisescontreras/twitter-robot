@@ -5,11 +5,14 @@ using System.Text;
 
 using Spring.Social.OAuth1;
 using Spring.Social.Twitter.Api;
-using Spring.Social.Twitter.Api.Impl;
 using Spring.Social.Twitter.Connect;
+using LinqToTwitter;
 using System.Net.Http;
 using System.IO;
 using System.Net;
+using TweetSharp;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace GestiónSeguidoresTwitter
 {
@@ -74,32 +77,62 @@ namespace GestiónSeguidoresTwitter
         public static string TwitterConsumerKeyClass = "";
         public static string TwitterConsumerSecretClass = "";
         ITwitter twitter;
+        TwitterContext context;
 
         //Conectar con API de Twitter mediante PIN para obtener token de acceso
         //devuelve true si la conexión se ha realizado correctamente
-        public bool obtenerTokenTwitter(ref string resultado, string TwitterConsumerKey = "8T90BKQKn6m3onMZqRMSkTliF", string TwitterConsumerSecret = "20JCkeUiJlAze7rUmoHgwdGUwXItgLess93bRI8DRpgpDdGPML")
+        public bool obtenerTokenTwitter(ref string resultado, string username, string TwitterConsumerKey = "8T90BKQKn6m3onMZqRMSkTliF", string TwitterConsumerSecret = "20JCkeUiJlAze7rUmoHgwdGUwXItgLess93bRI8DRpgpDdGPML")
         {
             try
             {
+
+                string text = System.IO.File.ReadAllText(@"C:\\Users\\eulis\\Desktop\\acces.txt");
+                var accounts = Convert.ToString(text).Split(new string[] { "</b>" }, StringSplitOptions.None);
+                int i = 0;
+                int j = 0;
+                foreach (var account in accounts)
+                {
+                    if ((account.Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? account.Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] : account.Split(new string[] { "\r\n" }, StringSplitOptions.None)[1]).Split(new string[] { "username:" }, StringSplitOptions.None)[1] == username)
+                    {
+                        j = i;
+                    }
+                    i++;
+                }
+
+                var auth = new SingleUserAuthorizer
+                {
+                    CredentialStore = new SingleUserInMemoryCredentialStore
+                    {
+                        ConsumerKey = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[1] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[2]).Split(new string[] { "Consumer Key:" }, StringSplitOptions.None)[1],
+                        ConsumerSecret = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[2] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[3]).Split(new string[] { "Consumer Secret:" }, StringSplitOptions.None)[1],
+                        AccessToken = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[3] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[4]).Split(new string[] { "Access Token:" }, StringSplitOptions.None)[1],
+                        AccessTokenSecret = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[4] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[5]).Split(new string[] { "Access Token Secret:" }, StringSplitOptions.None)[1]
+                    }
+                };
+
+                context = new TwitterContext(auth);
+
                 TwitterServiceProvider twitterServiceProvider =
                     new TwitterServiceProvider(TwitterConsumerKey, TwitterConsumerSecret);
-               // Autenticación en Twitter usando código PIN
-               OAuthToken oauthToken =
-                    twitterServiceProvider.OAuthOperations.FetchRequestTokenAsync("oob", null).Result;
+                // Autenticación en Twitter usando código PIN
+                OAuthToken oauthToken =
+                     twitterServiceProvider.OAuthOperations.FetchRequestTokenAsync("oob", null).Result;
                 string authenticateUrl =
                     twitterServiceProvider.OAuthOperations.BuildAuthorizeUrl(oauthToken.Value, null);
                 System.Diagnostics.Process.Start(authenticateUrl);
 
                 string pinCode = "";
-                InputBox.solicitarTexto("Código PIN", 
+                InputBox.solicitarTexto("Código PIN",
                     "Introduzca el código PIN obtenido de Twitter:", ref pinCode);
+                // Step 3 - Exchange the Request Token for an Access Token
+                string verifier = pinCode; // <-- This is input into your application by your user
 
                 AuthorizedRequestToken requestToken =
                     new AuthorizedRequestToken(oauthToken, pinCode);
                 OAuthToken oauthAccessToken =
                     twitterServiceProvider.OAuthOperations.ExchangeForAccessTokenAsync(requestToken, null).Result;
                 twitter = twitterServiceProvider.GetApi(oauthAccessToken.Value, oauthAccessToken.Secret);
-                resultado = System.DateTime.Now + " " + 
+                resultado = System.DateTime.Now + " " +
                     "Conectado a API de twitter correctamente con PIN";
                 return true;
             }
@@ -112,11 +145,11 @@ namespace GestiónSeguidoresTwitter
         }
         //Obtener los datos del perfil del usuario de Twitter
         //que ha iniciado sesión de autenticación con PIN
-        public void obtenerDatosPerfilPIN (string usuario, 
+        public void obtenerDatosPerfilPIN(string usuario,
             ref PerfilUsuario datosPerfilUsuario, ref string resultado)
         {
             try
-            {            
+            {
                 datosPerfilUsuario.nick =
                     twitter.UserOperations.GetUserProfileAsync(usuario).Result.ScreenName;
                 datosPerfilUsuario.nombre =
@@ -137,7 +170,7 @@ namespace GestiónSeguidoresTwitter
                         twitter.UserOperations.GetUserProfileAsync(usuario).Result.Language;
                 datosPerfilUsuario.urlPerfil =
                         twitter.UserOperations.GetUserProfileAsync(usuario).Result.ProfileUrl;
-                datosPerfilUsuario.verificado = 
+                datosPerfilUsuario.verificado =
                     twitter.UserOperations.GetUserProfileAsync(usuario).Result.IsVerified;
                 datosPerfilUsuario.traductor =
                     twitter.UserOperations.GetUserProfileAsync(usuario).Result.IsTranslator;
@@ -149,19 +182,19 @@ namespace GestiónSeguidoresTwitter
             catch (Exception error)
             {
                 resultado = System.DateTime.Now + " " +
-                            "Error al obtener datos del perfil [" + usuario + 
+                            "Error al obtener datos del perfil [" + usuario +
                             "]: " + error.Message;
             }
         }
 
-        
+
         //obtener datos perfil de usuario por ID
-        public void obtenerPerfilUsuario (long id, 
+        public void obtenerPerfilUsuario(long id,
             ref PerfilUsuario perfilUsuario, ref string resultado)
         {
             try
             {
-                TwitterProfile perfilUsuarioTwitter = 
+                TwitterProfile perfilUsuarioTwitter =
                     twitter.UserOperations.GetUserProfileAsync(id).Result;
                 PerfilUsuario perfil = new PerfilUsuario();
                 perfil.descripcion = perfilUsuarioTwitter.Description;
@@ -192,14 +225,14 @@ namespace GestiónSeguidoresTwitter
 
         //Enviar mensaje directo a usuario Twitter 
         //debe ser seguido por el usuario que ha iniciado sesión
-        public void enviarMensajeDirectoTwitter(string mensaje, 
+        public void enviarMensajeDirectoTwitter(string mensaje,
             long idUsuario, ref string resultado)
         {
             if (mensaje != "")
             {
                 try
                 {
-                    DirectMessage mensajeDirectoTwiiter =
+                    Spring.Social.Twitter.Api.DirectMessage mensajeDirectoTwiiter =
                         twitter.DirectMessageOperations.SendDirectMessageAsync(idUsuario, mensaje).Result;
                     resultado = System.DateTime.Now + " " +
                         "Mensaje directo [" + mensaje + "] enviado a [" +
@@ -221,16 +254,16 @@ namespace GestiónSeguidoresTwitter
 
                 List<MensajeDirecto> mensajes = new List<MensajeDirecto>();
 
-                IList<DirectMessage> mensajesTwiiter =
+                IList<Spring.Social.Twitter.Api.DirectMessage> mensajesTwiiter =
                     twitter.DirectMessageOperations.GetDirectMessagesReceivedAsync().Result;
 
-                foreach (DirectMessage mensajeTwitter in mensajesTwiiter)
+                foreach (Spring.Social.Twitter.Api.DirectMessage mensajeTwitter in mensajesTwiiter)
                 {
                     MensajeDirecto mensajeDirecto = new MensajeDirecto();
                     mensajeDirecto.id = mensajeTwitter.ID;
                     mensajeDirecto.idUsuario = mensajeTwitter.Sender.ID;
                     mensajeDirecto.nick = mensajeTwitter.Sender.ScreenName;
-                    mensajeDirecto.usuario = mensajeTwitter.Sender.Name; 
+                    mensajeDirecto.usuario = mensajeTwitter.Sender.Name;
                     mensajeDirecto.mensaje = mensajeTwitter.Text;
                     mensajeDirecto.fecha = mensajeTwitter.CreatedAt;
                     mensajes.Add(mensajeDirecto);
@@ -255,7 +288,7 @@ namespace GestiónSeguidoresTwitter
         {
             try
             {
-                DirectMessage mensaje;
+                Spring.Social.Twitter.Api.DirectMessage mensaje;
                 mensaje =
                     twitter.DirectMessageOperations.DeleteDirectMessageAsync(idMensaje).Result;
                 resultado = System.DateTime.Now + " " +
@@ -270,13 +303,13 @@ namespace GestiónSeguidoresTwitter
         }
 
         //Obtener últimos 20 usuarios que nos han seguido en Twitter
-        public List<Seguidor> obtenerUltimos20Seguidores (ref string resultado)
+        public List<Seguidor> obtenerUltimos20Seguidores(ref string resultado)
         {
             try
             {
                 List<Seguidor> seguidores = new List<Seguidor>();
 
-                CursoredList<TwitterProfile> seguidoresTwitter = 
+                CursoredList<TwitterProfile> seguidoresTwitter =
                     twitter.FriendOperations.GetFollowersAsync().Result;
                 foreach (TwitterProfile seguidorTwitter in seguidoresTwitter)
                 {
@@ -298,7 +331,7 @@ namespace GestiónSeguidoresTwitter
                     seguidores.Add(seguidor);
                     resultado = "Obteniendo seguidor [" + Convert.ToString(seguidorTwitter.ID) + "]" +
                         Environment.NewLine + resultado;
-                }                
+                }
                 resultado = System.DateTime.Now + " " +
                     "Últimos 20 seguidores obtenidos" +
                     Environment.NewLine + resultado;
@@ -392,32 +425,78 @@ namespace GestiónSeguidoresTwitter
         }
 
 
-        public void generarTweets(List<AutomaticMessageModel> tweetsAutomatics , formTwitter form)
+        public void generarTweets(List<AutomaticMessageModel> tweetsAutomatics, formTwitter form)
         {
-            while (true)
+            try
             { 
-                string resultado = "";
-                Random rnd = new Random();
-                int i = rnd.Next(tweetsAutomatics.Count);
+                while (true)
+                {
+                    string resultado = "";
+                    Random rnd = new Random();
+                    int i = rnd.Next(tweetsAutomatics.Count);
 
-                if (tweetsAutomatics[i].Status == 1 && tweetsAutomatics[i].State == 1)
-                {
-                    this.enviarTweet(tweetsAutomatics[i].Tweet, form);
-                    tweetsAutomatics[i].Status = 0;
-                    form.bdSQLite.updateStatus(tweetsAutomatics[i], ref resultado);
-                    form.construirTabla(ref resultado);
-                    break;
+                    if (tweetsAutomatics[i].Status == 1 && tweetsAutomatics[i].State == 1)
+                    {
+                        this.enviarTweet(tweetsAutomatics[i].Tweet, form, Convert.ToString(tweetsAutomatics[i].Id));
+                        tweetsAutomatics[i].Status = 0;
+                        form.bdSQLite.updateStatus(tweetsAutomatics[i], ref resultado);
+                        form.construirTabla(ref resultado);
+                        break;
+                    }
+                    else if (tweetsAutomatics[i].Status == 0 && tweetsAutomatics[i].State == 1)
+                    {
+                        this.eliminarTweet(tweetsAutomatics[i].Tweet, form);
+                        tweetsAutomatics[i].Status = 1;
+                        form.bdSQLite.updateStatus(tweetsAutomatics[i], ref resultado);
+                        form.construirTabla(ref resultado);
+                        break;
+                    }
                 }
-                else if (/*tweetsAutomatics.Find(x => x.Status == 1) == null &&*/ tweetsAutomatics[i].Status == 0 && tweetsAutomatics[i].State == 1)
-                {
-                    this.eliminarTweet(tweetsAutomatics[i].Tweet, form);
-                    tweetsAutomatics[i].Status = 1;
-                    form.bdSQLite.updateStatus(tweetsAutomatics[i], ref resultado);
-                    form.construirTabla(ref resultado);
-                    break;
-                }
+            }            
+            catch (Exception ex)
+            {
+
             }
-        }
+}
+
+        public void generarSeguidores(List<Cuentas> cuentas, formTwitter form)
+        {
+            try
+            { 
+                while (true && cuentas.Find(x => x.Follow == true) != null)
+                {
+                    string resultado = "";
+                    Random rnd = new Random();
+                    int i = rnd.Next(cuentas.Count);
+
+                    if (cuentas[i].Follow)
+                    {
+                        if (cuentas[i].Status == 1 && cuentas[i].State == 1)
+                        {
+                            this.FollowToFollows(cuentas[i].Username, form);
+                            cuentas[i].Status = 0;
+                            form.bdSQLite.updateStatusSeguidores(cuentas[i], ref resultado);
+                            form.construirTablaCuentas(ref resultado);
+                            break;
+                        }
+                        else if (cuentas[i].Status == 0 && cuentas[i].State == 1)
+                        {
+                            this.UnFollow(cuentas[i].Username, form);
+                            cuentas[i].Status = 1;
+                            form.bdSQLite.updateStatusSeguidores(cuentas[i], ref resultado);
+                            this.UnFollowTwenttyNoFollow(form);
+                            form.construirTablaCuentas(ref resultado);
+                            break;
+                        }
+                    }
+
+                }
+            }            
+            catch (Exception ex)
+            {
+
+            }
+}
 
         public void seguirUsuario(string usuario, ref string resultado)
         {
@@ -444,7 +523,7 @@ namespace GestiónSeguidoresTwitter
             try
             {
                 List<DatosTweet> tweets = new List<DatosTweet>();
-                
+
                 IList<Tweet> lineaTiempo;
                 lineaTiempo =
                     twitter.TimelineOperations.GetHomeTimelineAsync().Result;
@@ -499,6 +578,97 @@ namespace GestiónSeguidoresTwitter
 
 
         //Enviar tweet
+        public async void enviarTweet(string texto, formTwitter form, string tweetid)
+        {
+            try
+            {
+                string resultado = "";
+                Random rnd = new Random();
+                Tweet tweet;
+                List<string> listImagen = new List<string>();
+                form.bdSQLite.obtenerImagen(ref resultado,ref listImagen, tweetid);
+                List<Task<Media>> imageUploadTasks = new List<Task<Media>>();
+
+                List<string> listVideo = new List<string>();
+                form.bdSQLite.obtenerVideos(ref resultado, ref listVideo, tweetid);
+                List<Task<Media>> videoUploadTasks = new List<Task<Media>>();
+
+                if (listImagen.Count > 0 || listVideo.Count > 0)
+                {
+                    int i = rnd.Next(10000);
+                    if (i % 2 == 0)
+                    {
+                        foreach (var image in listImagen)
+                        {
+                            imageUploadTasks.Add(context.UploadMediaAsync(File.ReadAllBytes(image), "image/jpg", "tweet_image"));
+                        }
+                        await Task.WhenAll(imageUploadTasks);
+
+                        var mediaIds =
+                           (from tsk in imageUploadTasks
+                            select tsk.Result.MediaID)
+                           .ToList();
+                        await context.TweetAsync(
+                            texto,
+                            mediaIds
+                        );
+                    }
+                    else
+                    {
+                        Media media = null;
+                        foreach (var video in listVideo)
+                        {
+                            media = await context.UploadMediaAsync(File.ReadAllBytes(video), "video/mp4", "tweet_video");
+                        }
+
+                        Media mediaStatusResponse = null;
+                        do
+                        {
+                            if (mediaStatusResponse != null)
+                            {
+                                int checkAfterSeconds = mediaStatusResponse?.ProcessingInfo?.CheckAfterSeconds ?? 0;
+                                Console.WriteLine($"Twitter video testing in progress - waiting {checkAfterSeconds} seconds.");
+                                await Task.Delay(checkAfterSeconds * 1000);
+                            }
+
+                            mediaStatusResponse =
+                                await
+                                (from stat in context.Media
+                                 where stat.Type == MediaType.Status &&
+                                       stat.MediaID == media.MediaID
+                                 select stat)
+                                .SingleOrDefaultAsync();
+                        } while (mediaStatusResponse?.ProcessingInfo?.State == MediaProcessingInfo.InProgress);
+
+                        if (mediaStatusResponse?.ProcessingInfo?.State == MediaProcessingInfo.Succeeded)
+                        {
+                            Status tweett = await context.TweetAsync(texto, new ulong[] { media.MediaID });
+
+                            if (tweett != null)
+                                Console.WriteLine($"Tweet sent: {tweett.Text}");
+                        }
+                        else
+                        {
+                            MediaError error = mediaStatusResponse?.ProcessingInfo?.Error;
+
+                            if (error != null)
+                            {
+                                form.txtLog.Text = System.DateTime.Now + " " +
+                                    "Error al enviar tweet: " + "Request failed - Code: {error.Code}, Name: {error.Name}, Message: {error.Message}" + Environment.NewLine + form.txtLog.Text;
+                            }
+                        }
+                    }
+                     
+                }else
+                    tweet = await twitter.TimelineOperations.UpdateStatusAsync(texto);
+            }
+            catch (Exception error)
+            {
+                form.txtLog.Text = System.DateTime.Now + " " +
+                    "Error al enviar tweet: " + error.Message + Environment.NewLine + form.txtLog.Text;
+            }
+        }
+
         public async void enviarTweet(string texto, formTwitter form)
         {
             try
@@ -511,7 +681,6 @@ namespace GestiónSeguidoresTwitter
                     "Error al enviar tweet: " + error.Message + Environment.NewLine + form.txtLog.Text;
             }
         }
-
         //Eliminar tweet
         public async void eliminarTweet(string texto, formTwitter form)
         {
@@ -521,10 +690,10 @@ namespace GestiónSeguidoresTwitter
                 Tweet tweet;
                 long id = 0;
                 lineaTiempo =
-                    twitter.TimelineOperations.GetHomeTimelineAsync().Result;
+                    twitter.TimelineOperations.GetUserTimelineAsync().Result;
                 foreach (Tweet tweetTwitter in lineaTiempo)
                 {
-                    if(Convert.ToString(tweetTwitter.Text) == texto)
+                    if (Convert.ToString(tweetTwitter.Text).Split(new string[] { " https" }, StringSplitOptions.None)[0] == texto.Replace("\r",""))
                         id = tweetTwitter.ID;
                 }
                 if (lineaTiempo.First(x => x.ID == id) != null)
@@ -542,9 +711,9 @@ namespace GestiónSeguidoresTwitter
         public List<long> obtenerUltimos5000Amigos(long cursor, ref string resultado)
         {
             try
-            {                
-                CursoredList<long> amigosTwitter = 
-                    twitter.FriendOperations.GetFriendIdsInCursorAsync(cursor).Result;                
+            {
+                CursoredList<long> amigosTwitter =
+                    twitter.FriendOperations.GetFriendIdsInCursorAsync(cursor).Result;
                 resultado = System.DateTime.Now + " " +
                     "Últimos 5000 amigos obtenidos" +
                     Environment.NewLine + resultado;
@@ -558,6 +727,152 @@ namespace GestiónSeguidoresTwitter
             }
         }
 
+        public async void FollowToFollows(string username, formTwitter form)
+        {
+            try
+            {
+                Random rnd4 = new Random();
+                CursoredList<TwitterProfile> twitterp = await twitter.FriendOperations.GetFollowersAsync(username);
+                string resultado = "";
+                foreach (TwitterProfile tp in twitterp)
+                {
+                    try
+                    {
+
+                        if (form.txtUsuarioAccesoTwitter.Text != tp.ScreenName)
+                        {
+                            await twitter.FriendOperations.FollowAsync(tp.ID);
+                            List<Cuentas> cuentas = new List<Cuentas>();
+                            form.bdSQLite.obtenerCuentas(ref resultado, ref cuentas);
+                            var valor = cuentas.Find(x => x.Username == Convert.ToString(tp.ScreenName));
+
+                            if (valor == null)
+                            {
+                                Cuentas cuenta = new Cuentas();
+                                cuenta.Username = tp.ScreenName;
+                                cuenta.Status = 1;
+
+                                int i4 = rnd4.Next(10000);
+                                if (i4 % 2 == 0)
+                                    cuenta.Follow = true;
+                                else
+                                    cuenta.Follow = false;
+                                form.bdSQLite.insertarCuenta(ref form.tareasTwitter, cuenta, ref resultado);
+                            }
+                            else
+                            {
+                                resultado = System.DateTime.Now + " " + "La cuenta ya se encuentra registrado.";
+                                form.txtLog.Text = System.DateTime.Now + " " +
+                                    resultado +
+                                    Environment.NewLine + form.txtLog.Text;
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                    }
+                }
+                form.construirTablaCuentas(ref resultado);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public async void UnFollowTwenttyNoFollow(formTwitter form)
+        {
+            string resultado = "";
+
+            try
+            {
+                form.btTest_Aux();
+                form.UnFollow_Aux();
+               
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
+        public async void UnFollow(string username, formTwitter form)
+        {
+            try
+            {
+                await twitter.FriendOperations.UnfollowAsync(username);
+            }            
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
+        public async void AddToFavoriteAndRetweet(string username, formTwitter form) {
+            try
+            {
+                IList<Tweet> tweets = await twitter.TimelineOperations.GetUserTimelineAsync(username);
+                foreach (Tweet aux in tweets)
+                {
+                    try
+                    {
+                        await twitter.TimelineOperations.AddToFavoritesAsync(aux.ID);
+                        await twitter.TimelineOperations.RetweetAsync(aux.ID);
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                    }
+                }
+            }            
+            catch (Exception ex)
+            {
+
+            }
+}
+
+        public void generarRetweetFavoritos(List<Cuentas> cuentas, formTwitter form)
+        {
+            try
+            { 
+                while (true && (cuentas.Find(x => x.Autorizar == true) != null || cuentas.Find(x => x.Favorites == true) != null))
+                {
+                    string resultado = "";
+             
+                    Random rnd = new Random();
+                    int i = rnd.Next(cuentas.Count);
+
+                    if (cuentas[i].Autorizar || cuentas[i].Favorites)
+                    {
+                        if (cuentas[i].Status == 1 && cuentas[i].State == 1)
+                        {
+                            this.AddToFavoriteAndRetweet(cuentas[i].Username, form);
+                            cuentas[i].Status = 0;
+                            form.bdSQLite.updateStatusSeguidores(cuentas[i], ref resultado);
+                            form.construirTablaCuentas(ref resultado);
+                            break;
+                        }
+                        else if (cuentas[i].Status == 0 && cuentas[i].State == 1)
+                        {
+                            //this.UnFollow(cuentas[i].Username, form);
+                            cuentas[i].Status = 1;
+                            form.bdSQLite.updateStatusSeguidores(cuentas[i], ref resultado);
+                            form.construirTablaCuentas(ref resultado);
+                            break;
+                        }
+                    }
+
+                }
+            }            
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         //Obtener últimos 5000 usuarios que nos siguen (seguidores) en Twitter
         //cursor = -1 obtendrá los 5000 seguidores del usuario con el que hemos iniciado sesión
@@ -565,7 +880,7 @@ namespace GestiónSeguidoresTwitter
         {
             try
             {
-                CursoredList<long> seguidoresTwitter =
+                CursoredList <long> seguidoresTwitter =
                     twitter.FriendOperations.GetFollowerIdsInCursorAsync(cursor).Result;
 
                 resultado = System.DateTime.Now + " " +
@@ -580,5 +895,6 @@ namespace GestiónSeguidoresTwitter
                 return null;
             }
         }
+        
     }
 }

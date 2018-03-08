@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GestiónSeguidoresTwitter
 {
     public partial class formTwitter : Form
     {
-        Dictionary<int,TareasTwitter> tareasTwitter = null;
+
+        public Dictionary<int,TareasTwitter> tareasTwitter = null;
         public static int i = 0;
         public BDSQLite bdSQLite = new BDSQLite();
         Int32 numMensajesDirectosSesion = 0;
         int id;
         int idCuenta;
+        public bool executeIntervalTweets = false;
+        public bool executeIntervalSeguidores = false;
+        public bool executeIntervalRetweetsFavoritos = false;
 
         private void cerrarAplicacion()
         {
@@ -78,8 +87,17 @@ namespace GestiónSeguidoresTwitter
 
         private void btConectarTwitter_Click(object sender, EventArgs e)
         {
+      
+           /* ListFollowersOptions options = new ListFollowersOptions();
+            options.UserId = tuSelf.Id;
+            options.ScreenName = tuSelf.ScreenName;
+            options.IncludeUserEntities = true;
+            options.SkipStatus = false;
+            options.Cursor = -1;
+            IEnumerable<TwitterUser> mentions = service.ListFollowers();*/
+
             string resultado = "";
-            if (tareasTwitter[i].obtenerTokenTwitter(ref resultado))
+            if (tareasTwitter[i].obtenerTokenTwitter(ref resultado,txtUsuarioAccesoTwitter.Text))
             {
                 btObtenerDatosPerfil.Enabled = true;
                 btPerfilVisitarURL.Enabled = true;
@@ -94,7 +112,7 @@ namespace GestiónSeguidoresTwitter
                 btPerfilVisitarURL.Enabled = false;
                 tabListadeTweetsAutomatizados.Enabled = false;
             }
-            txtLog.Text = resultado;                
+            txtLog.Text = resultado;
         }
 
         private void btObtenerSeguidores_Click(object sender, EventArgs e)
@@ -545,96 +563,98 @@ namespace GestiónSeguidoresTwitter
 
             try
             {
-                //obtenemos últimos 20 seguidores
-                List<Seguidor> seguidores = new List<Seguidor>();
-                seguidores = tareasTwitter[i].obtenerUltimos20Seguidores(ref resultado);
-                txtLog.Text = resultado +
-                    Environment.NewLine + txtLog.Text;
+                    Thread.Sleep(15000);
+                    Thread.BeginCriticalRegion();
+                    //obtenemos últimos 20 seguidores
+       /*             List<Seguidor> seguidores = new List<Seguidor>();
+                    seguidores = tareasTwitter[i].obtenerUltimos20Seguidores(ref resultado);
+                    txtLog.Text = resultado +
+                        Environment.NewLine + txtLog.Text;
 
-                //recorremos seguidor a seguidor para tareas automáticas
-                foreach (Seguidor seguidor in seguidores)
-                {
-                    //si el seguidor es nuevo lo añadimos a la BD SQLite
-                    if (!bdSQLite.existeSeguidor(seguidor.perfilUsuario.id, ref resultado))
+                    //recorremos seguidor a seguidor para tareas automáticas
+                    foreach (Seguidor seguidor in seguidores)
                     {
-                        txtLog.Text = resultado +
-                            Environment.NewLine + txtLog.Text;
-                        bdSQLite.insertarSeguidor(seguidor.perfilUsuario.id, ref resultado);
-                        txtLog.Text = resultado +
-                            Environment.NewLine + txtLog.Text;
-                       
-                        //Es un nuevo seguidor, le enviamos automáticamente un mensaje directo
-                        if (txtTareaAutoMensajeDirectoSeguidores.Text != "" &
-                            opTareaAutoEnviarMensajeDirectoSeguidores.Checked)
+                        //si el seguidor es nuevo lo añadimos a la BD SQLite
+                        if (!bdSQLite.existeSeguidor(seguidor.perfilUsuario.id, ref resultado))
                         {
-                            tareasTwitter[i].enviarMensajeDirectoTwitter(
-                                txtTareaAutoMensajeDirectoSeguidores.Text,
-                                seguidor.perfilUsuario.id, ref resultado);
                             txtLog.Text = resultado +
                                 Environment.NewLine + txtLog.Text;
-                            numMensajesDirectosSesion = numMensajesDirectosSesion + 1;
-                            bePNumMensajesDirectos.Text = "Nº mensajes directos: " +
-                                Convert.ToString(numMensajesDirectosSesion);
-                            if (iconizarApp.Visible)
-                                iconizarApp.Text = Application.ProductName + " @" +
-                                    txtUsuarioAccesoTwitter.Text + " [" +
-                                    Convert.ToString(numMensajesDirectosSesion) + "]";
-                        }
+                            bdSQLite.insertarSeguidor(seguidor.perfilUsuario.id, ref resultado);
+                            txtLog.Text = resultado +
+                                Environment.NewLine + txtLog.Text;
 
-                        //añadi mención nuevo seguidor
-                        if (opTareaAutoMencion.Checked)
-                        {
-                            if (seguidor.perfilUsuario.nick != "" & txtTareaAutoMencion.Text != "")
+                            //Es un nuevo seguidor, le enviamos automáticamente un mensaje directo
+                            if (txtTareaAutoMensajeDirectoSeguidores.Text != "" &
+                                opTareaAutoEnviarMensajeDirectoSeguidores.Checked)
                             {
-                                string textoMencion = "";
-                                textoMencion = txtTareaAutoMencion.Text;
-                                textoMencion = textoMencion.Replace("##nick##",
-                                    "@" + seguidor.perfilUsuario.nick);
-                                try { 
-                                    tareasTwitter[i].enviarTweet(textoMencion, this);
-                                    txtLog.Text = textoMencion +
-                                        Environment.NewLine + txtLog.Text;
-                                }
-                                catch (Exception error)
+                                tareasTwitter[i].enviarMensajeDirectoTwitter(
+                                    txtTareaAutoMensajeDirectoSeguidores.Text,
+                                    seguidor.perfilUsuario.id, ref resultado);
+                                txtLog.Text = resultado +
+                                    Environment.NewLine + txtLog.Text;
+                                numMensajesDirectosSesion = numMensajesDirectosSesion + 1;
+                                bePNumMensajesDirectos.Text = "Nº mensajes directos: " +
+                                    Convert.ToString(numMensajesDirectosSesion);
+                                if (iconizarApp.Visible)
+                                    iconizarApp.Text = Application.ProductName + " @" +
+                                        txtUsuarioAccesoTwitter.Text + " [" +
+                                        Convert.ToString(numMensajesDirectosSesion) + "]";
+                            }
+
+                            //añadi mención nuevo seguidor
+                            if (opTareaAutoMencion.Checked)
+                            {
+                                if (seguidor.perfilUsuario.nick != "" & txtTareaAutoMencion.Text != "")
                                 {
-                                    resultado = System.DateTime.Now + " " +
-                                        "Error al enviar tweet: " + error.Message;
+                                    string textoMencion = "";
+                                    textoMencion = txtTareaAutoMencion.Text;
+                                    textoMencion = textoMencion.Replace("##nick##",
+                                        "@" + seguidor.perfilUsuario.nick);
+                                    try
+                                    {
+                                        tareasTwitter[i].enviarTweet(textoMencion, this);
+                                        txtLog.Text = textoMencion +
+                                            Environment.NewLine + txtLog.Text;
+                                    }
+                                    catch (Exception error)
+                                    {
+                                        resultado = System.DateTime.Now + " " +
+                                            "Error al enviar tweet: " + error.Message;
+                                    }
                                 }
                             }
-                        }
 
-                        //Es un nuevo seguidor, lo seguimos
-                        if (opTareaAutoSeguirSeguidor.Checked)
-                        {
-                            tareasTwitter[i].seguirUsuario(seguidor.perfilUsuario.nick, ref resultado);
-                            txtLog.Text = resultado +
-                                Environment.NewLine + txtLog.Text;
+                            //Es un nuevo seguidor, lo seguimos
+                            if (opTareaAutoSeguirSeguidor.Checked)
+                            {
+                                tareasTwitter[i].seguirUsuario(seguidor.perfilUsuario.nick, ref resultado);
+                                txtLog.Text = resultado +
+                                    Environment.NewLine + txtLog.Text;
+                            }
                         }
-                    }
-                    else
-                        txtLog.Text = System.DateTime.Now + " " +
-                            "El seguidor [" + Convert.ToString(seguidor.perfilUsuario.id) +
-                            "] ya existe en la BD" +
-                            Environment.NewLine + txtLog.Text;
+                        else
+                            txtLog.Text = System.DateTime.Now + " " +
+                                "El seguidor [" + Convert.ToString(seguidor.perfilUsuario.id) +
+                                "] ya existe en la BD" +
+                                Environment.NewLine + txtLog.Text;
+                    }*/
+                    temporizador.Stop();
+                    timer1.Start();
+                    timer2.Stop();
+                    timer3.Stop();
+                    Thread.EndCriticalRegion();
                 }
-                
-                //Automatizar tweets aleatorios
-                if (opTareaAutomatizarTweets.Checked)
+                catch (Exception error)
                 {
-                    List<AutomaticMessageModel> tweets = new List<AutomaticMessageModel>();
-                    bdSQLite.obtenerTweetsAutomatizados(ref resultado, ref tweets, txtUsuarioAccesoTwitter.Text);
-                    tareasTwitter[i].generarTweets(tweets, this);
-                    txtLog.Text = resultado +
-                            Environment.NewLine + txtLog.Text;
+                    temporizador.Stop();
+                    timer1.Start();
+                    timer2.Stop();
+                    timer3.Stop();
+                    txtLog.Text = System.DateTime.Now + " " +
+                        "Error al iniciar temporizador: " + error.Message +
+                        Environment.NewLine + txtLog.Text;
                 }
             }
-            catch (Exception error)
-            {
-                txtLog.Text = System.DateTime.Now + " " +
-                    "Error al iniciar temporizador: " + error.Message +
-                    Environment.NewLine + txtLog.Text;
-            }
-        }
 
 
 
@@ -663,18 +683,59 @@ namespace GestiónSeguidoresTwitter
             }         
         }
 
-
         private void btActivarTareasAutomaticas_Click(object sender, EventArgs e)
         {
             try
             {
+                ////////////////////////////// start temporizer ////////////////////////////////
+                //temporizador general
+                Random rnd = new Random();
+                int i = rnd.Next((Convert.ToInt32(numericUpDown1.Text) * 1000) - (Convert.ToInt32(txtTareaAutomaticaIntervalo.Text) * 1000));
+                txtLog.Text = "Tiempo General: " + i +
+                                    Environment.NewLine + txtLog.Text;
                 temporizador.Enabled = false;
-                if (txtTareaAutomaticaIntervalo.Text != "")
-                    temporizador.Interval =
-                        Convert.ToInt32(txtTareaAutomaticaIntervalo.Text) * 1000;
+                if (txtTareaAutomaticaIntervalo.Text != "" && numericUpDown1.Text != "")
+                    temporizador.Interval = i;
                 else
                     temporizador.Interval = 300000; //si no se especifica intervalo: 5 minutos
 
+                //Temporizador tweets
+                executeIntervalTweets = true;
+                Random rnd2 = new Random();
+                int i2 = rnd2.Next((Convert.ToInt32(numericUpDown2.Text) * 1000) - (Convert.ToInt32(numericUpDown3.Text) * 1000));
+                txtLog.Text = "Tiempo Tweets: " + i2 +
+                                    Environment.NewLine + txtLog.Text;
+                timer1.Enabled = false;
+                if (numericUpDown2.Text != "" && numericUpDown3.Text != "")
+                    timer1.Interval = i2;
+                else
+                    timer1.Interval = 300000; //si no se especifica intervalo: 5 minutos
+
+                //Temporizador seguidores
+                executeIntervalSeguidores = true;
+                Random rnd3 = new Random();
+                int i3 = rnd3.Next((Convert.ToInt32(numericUpDown4.Text) * 1000) - (Convert.ToInt32(numericUpDown5.Text) * 1000));
+                txtLog.Text = "Tiempo Seguiores: " + i3 +
+                                    Environment.NewLine + txtLog.Text;
+                timer2.Enabled = false;
+                if (numericUpDown4.Text != "" && numericUpDown5.Text != "")
+                    timer2.Interval = i3;
+                else
+                    timer2.Interval = 300000; //si no se especifica intervalo: 5 minutos
+
+                //Temporizador retweets favoritos
+                executeIntervalRetweetsFavoritos = true;
+                Random rnd4 = new Random();
+                int i4 = rnd4.Next((Convert.ToInt32(numericUpDown6.Text) * 1000) - (Convert.ToInt32(numericUpDown7.Text) * 1000));
+                txtLog.Text = "Tiempo retweet y favoritos: " + i4 +
+                                    Environment.NewLine + txtLog.Text;
+                timer3.Enabled = false;
+                if (numericUpDown6.Text != "" && numericUpDown7.Text != "")
+                    timer3.Interval = i4;
+                else
+                    timer3.Interval = 300000; //si no se especifica intervalo: 5 minutos
+
+                ///////////////////////// end temporizer ///////////////////////////////////////
                 if (System.IO.File.Exists(txtBDSQLite.Text))
                 {
                     string resultado = "";
@@ -940,15 +1001,13 @@ namespace GestiónSeguidoresTwitter
         private void btDetenerTareasAutomaticas_Click(object sender, EventArgs e)
         {
             temporizador.Enabled = false;
+            timer1.Enabled = false;
+            timer2.Enabled = false;
+            timer3.Enabled = false;
             btActivarTareasAutomaticas.Enabled = true;
             btDetenerTareasAutomaticas.Enabled = false;
             mnuDesactivarTareasAutomaticas.Enabled = false;
             mnuActivarTareasAutomaticas.Enabled = true;
-        }
-
-        private void lbEnlaceURL_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://www.ajpdsoft.com");
         }
 
         private void formTwitter_FormClosed(object sender, FormClosedEventArgs e)
@@ -1049,11 +1108,10 @@ namespace GestiónSeguidoresTwitter
         }
 
 
-
-        private void btTest_Click(object sender, EventArgs e)
+        public void btTest_Aux()
         {
             string resultado = "";
-            
+
             //últimos 5000 amigos
             List<long> listaAmigos = new List<long>();
             listaAmigos = tareasTwitter[0].obtenerUltimos5000Amigos(-1, ref resultado);
@@ -1112,11 +1170,16 @@ namespace GestiónSeguidoresTwitter
                 {
                     elementosFilaAmigosNoteSiguen[0] = elementoLista.Text;
                     elementoListViewAmigosNoteSiguen = new ListViewItem(elementosFilaAmigosNoteSiguen);
-                    lsAmigosNoTeSiguen.Items.Add(elementoListViewAmigosNoteSiguen);                    
+                    lsAmigosNoTeSiguen.Items.Add(elementoListViewAmigosNoteSiguen);
                 }
             }
             lInfoAmigosNoTeSiguen.Text = "Amigos que no te siguen [" +
-                Convert.ToString(lsAmigosNoTeSiguen.Items.Count) + "]";        
+                Convert.ToString(lsAmigosNoTeSiguen.Items.Count) + "]";
+        }
+
+        private void btTest_Click(object sender, EventArgs e)
+        {
+            btTest_Aux();
         }
 
         private void btMinimizar_Click(object sender, EventArgs e)
@@ -1200,6 +1263,37 @@ namespace GestiónSeguidoresTwitter
             textoMencion = textoMencion.Replace("##nick##",
                 "@" + txtUsuarioAccesoTwitter.Text);
             lMencionResultado.Text = textoMencion;
+        }
+
+        public void UnFollow_Aux()
+        {
+            int i = 0;
+            foreach (ListViewItem elemento in lsAmigosNoTeSiguen.Items)
+            {
+                string resultado = "";
+                long idUsuario = 0;
+                try
+                {
+                    if (elemento.Text != "")
+                    {
+                        idUsuario = Convert.ToInt64(elemento.Text);
+                        tareasTwitter[0].dejarDeSeguirAmigo(idUsuario, ref resultado);
+                        txtLog.Text = resultado + Environment.NewLine + txtLog.Text;
+                        i++;
+                    }
+
+                    if (i == 20)
+                    {
+                        break;
+                    }
+                }
+                catch (Exception error)
+                {
+                    txtLog.Text = System.DateTime.Now + " " +
+                       "Error al dejar de seguir a [" + Convert.ToString(idUsuario) + "]: " +
+                       error.Message + Environment.NewLine + txtLog.Text;
+                }
+            }
         }
 
         private void btDejarSeguirTodos_Click(object sender, EventArgs e)
@@ -1387,10 +1481,13 @@ namespace GestiónSeguidoresTwitter
             //Añadimos las columnas al ListView
             listViewCuentas.Columns.Add("ID", 200);
             listViewCuentas.Columns.Add("Username", 200);
-            listViewCuentas.Columns.Add("Password", 350);
+            listViewCuentas.Columns.Add("Status", 350);
             listViewCuentas.Columns.Add("Fecha", 200);
+            listViewCuentas.Columns.Add("Seguir", 200);
+            listViewCuentas.Columns.Add("Favoritos", 200);
+            listViewCuentas.Columns.Add("Autorizado", 200);
             //Añadimos los elementos (filas) al ListView
-            string[] elementosFila = new string[4];
+            string[] elementosFila = new string[7];
             ListViewItem elementoListView;
 
             List<Cuentas> cuentas = new List<Cuentas>();
@@ -1400,8 +1497,19 @@ namespace GestiónSeguidoresTwitter
                 //Añadimos una primera fila al ListView
                 elementosFila[0] = Convert.ToString(cuenta.Id);
                 elementosFila[1] = Convert.ToString(cuenta.Username);
-                elementosFila[2] = Convert.ToString(cuenta.Password);
+                switch (cuenta.Status)
+                {
+                    case 0:
+                        elementosFila[2] = Convert.ToString("Por dejar de seguir");
+                        break;
+                    case 1:
+                        elementosFila[2] = Convert.ToString("Por seguir");
+                        break;
+                }
                 elementosFila[3] = Convert.ToString(cuenta.Fecha);
+                elementosFila[4] = Convert.ToString(cuenta.Follow ? "SI":"NO");
+                elementosFila[5] = Convert.ToString(cuenta.Favorites ? "SI" : "NO");
+                elementosFila[6] = Convert.ToString(cuenta.Autorizar ? "SI" : "NO");
                 elementoListView = new ListViewItem(elementosFila);
                 listViewCuentas.Items.Add(elementoListView);
             }
@@ -1444,38 +1552,131 @@ namespace GestiónSeguidoresTwitter
             }
         }
 
-        private void ButtonAgregar_Click(object sender, EventArgs e)
+        public void AgregarTweets()
         {
             string resultado = "";
             List<AutomaticMessageModel> tweets = new List<AutomaticMessageModel>();
             bdSQLite.obtenerTweetsAutomatizados(ref resultado, ref tweets, txtUsuarioAccesoTwitter.Text);
-            var valor = tweets.Find(x => x.Tweet == Convert.ToString(textBoxTweet.Text));
+            var tweetss = new List<string>();
+            var tweetImages = new List<List<string>>();
+            var tweetVideos = new List<List<string>>();
+            string[] tweetssAux;
 
-            if (valor == null)
+            if (Convert.ToString(textBoxTweet.Text).Split(new string[] { "</b>" }, StringSplitOptions.None).Length <= 1)
             {
-                bdSQLite.insertarTweet(Convert.ToString(textBoxTweet.Text), ref resultado, txtUsuarioAccesoTwitter.Text);
-                construirTabla(ref resultado);
+                var valor = tweets.Find(x => x.Tweet == Convert.ToString(textBoxTweet.Text));
+
+                tweetss.Add(Convert.ToString(textBoxTweet.Text).Split(new string[] { "</imagen>" }, StringSplitOptions.None)[0]);
+
+                var tweetsImage = new List<string>();
+                foreach (var imageUrl in Convert.ToString(textBoxTweet.Text).Split(new string[] { "</imagen>" }, StringSplitOptions.None)[1].Split(new string[] { "\r\n" }, StringSplitOptions.None))
+                {
+                    if (imageUrl.Contains(".jpg"))
+                        tweetsImage.Add(imageUrl);
+                }
+                tweetImages.Add(tweetsImage);
+
+                var tweetsVideo = new List<string>();
+                foreach (var videoUrl in Convert.ToString(textBoxTweet.Text).Split(new string[] { "</video>" }, StringSplitOptions.None)[1].Split(new string[] { "\r\n" }, StringSplitOptions.None))
+                {
+                    if (videoUrl.Contains(".mp4"))
+                        tweetsVideo.Add(videoUrl);
+                }
+                tweetVideos.Add(tweetsVideo);
+
+                if (valor == null)
+                {
+                    bdSQLite.insertarTweet(Convert.ToString(textBoxTweet.Text).Split(new string[] { "</imagen>" }, StringSplitOptions.None)[0], ref resultado, txtUsuarioAccesoTwitter.Text, tweetImages[0], tweetVideos[0]);
+                    construirTabla(ref resultado);
+                }
+                else
+                {
+                    resultado = System.DateTime.Now + " " + "El tweet ya se encuentra registrado.";
+                    MessageBox.Show("El tweet ya se encuentra registrado." +
+                        Environment.NewLine + Environment.NewLine + resultado,
+                        "Tweet",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             else
             {
-                resultado = System.DateTime.Now + " " + "El tweet ya se encuentra registrado.";
-                MessageBox.Show("El tweet ya se encuentra registrado." +
-                    Environment.NewLine + Environment.NewLine + resultado,
-                    "Tweet",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                tweetss = new List<string>();
+                var i = 0;
+                tweetssAux = Convert.ToString(textBoxTweet.Text).Split(new string[] { "</b>" }, StringSplitOptions.None);
+                foreach (var tweet in tweetssAux)
+                {
+                    tweetss.Add(tweet.Split(new string[] { "</imagen>" }, StringSplitOptions.None)[0]);
+                    var tweetsImage = new List<string>();
+                    foreach (var imageUrl in tweet.Split(new string[] { "</imagen>" }, StringSplitOptions.None)[1].Split(new string[] { "\r\n" }, StringSplitOptions.None))
+                    {
+                        if (imageUrl.Contains(".jpg"))
+                            tweetsImage.Add(imageUrl);
+                    }
+                    tweetImages.Add(tweetsImage);
+
+                    var tweetsVideo = new List<string>();
+                    foreach (var videoUrl in tweet.Split(new string[] { "</video>" }, StringSplitOptions.None)[1].Split(new string[] { "\r\n" }, StringSplitOptions.None))
+                    {
+                        if (videoUrl.Contains(".mp4"))
+                            tweetsVideo.Add(videoUrl);
+                    }
+                    tweetVideos.Add(tweetsVideo);
+                }
+
+                foreach (string aux in tweetss)
+                {
+                    var valor = tweets.Find(x => x.Tweet == Convert.ToString(aux));
+                    if (valor == null)
+                    {
+                        bdSQLite.insertarTweet(Convert.ToString(aux), ref resultado, txtUsuarioAccesoTwitter.Text, tweetImages[i], tweetVideos[i]);
+                    }
+                    else
+                    {
+                        resultado = System.DateTime.Now + " " + "El tweet ya se encuentra registrado.";
+                        txtLog.Text = "El tweet ya se encuentra registrado." +
+                                        Environment.NewLine + Environment.NewLine + resultado +
+                                        Environment.NewLine + txtLog.Text;
+                    }
+                    i++;
+                }
+                construirTabla(ref resultado);
             }
+
             txtLog.Text = resultado + Environment.NewLine + txtLog.Text;
+
+        }
+        private void ButtonAgregar_Click(object sender, EventArgs e)
+        {
+            AgregarTweets();
         }
 
         private void listViewTweetsAutomatizados_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBoxTweet.Text = Convert.ToString(listViewTweetsAutomatizados.Items[listViewTweetsAutomatizados.FocusedItem.Index].SubItems[1].Text);
+            string resultado = "";
+            List<string> list = new List<string>();
+            bdSQLite.obtenerImagen(ref resultado, ref list, Convert.ToString(listViewTweetsAutomatizados.Items[listViewTweetsAutomatizados.FocusedItem.Index].SubItems[0].Text));
+            string urls = "";
+            foreach (string aux in list)
+            {
+                urls = urls + aux + "\r\n";
+            }
+            list = new List<string>();
+            bdSQLite.obtenerVideos(ref resultado, ref list, Convert.ToString(listViewTweetsAutomatizados.Items[listViewTweetsAutomatizados.FocusedItem.Index].SubItems[0].Text));
+            string urlsVideos = "";
+            foreach (string aux in list)
+            {
+                urlsVideos = urlsVideos + aux + "\r\n";
+            }
+            textBoxTweet.Text = Convert.ToString(listViewTweetsAutomatizados.Items[listViewTweetsAutomatizados.FocusedItem.Index].SubItems[1].Text)+"\r\n"+"</imagen>" + "\r\n"+urls + "</video>" + "\r\n" + urlsVideos;
+            
         }
 
         private void ButtonEliminar_Click(object sender, EventArgs e)
         {
             string resultado = "";
             bdSQLite.deleteTweet(Convert.ToInt32(listViewTweetsAutomatizados.Items[listViewTweetsAutomatizados.FocusedItem.Index].SubItems[0].Text), ref resultado);
+            bdSQLite.deleteImage(Convert.ToString(Convert.ToInt32(listViewTweetsAutomatizados.Items[listViewTweetsAutomatizados.FocusedItem.Index].SubItems[0].Text)), ref resultado);
+            bdSQLite.deleteVideo(Convert.ToString(Convert.ToInt32(listViewTweetsAutomatizados.Items[listViewTweetsAutomatizados.FocusedItem.Index].SubItems[0].Text)), ref resultado);
             construirTabla(ref resultado);
             txtLog.Text = resultado + Environment.NewLine + txtLog.Text;
         }
@@ -1483,6 +1684,9 @@ namespace GestiónSeguidoresTwitter
         private void ButtonEditar_Click(object sender, EventArgs e)
         {
             AutomaticMessageModel message = new AutomaticMessageModel();
+            var tweetss = new List<string>();
+            var tweetImages = new List<List<string>>();
+            string[] tweetssAux;
             try
             {
 
@@ -1493,16 +1697,34 @@ namespace GestiónSeguidoresTwitter
             {
                 message.Id = id;
             }
-            message.Tweet = Convert.ToString(textBoxTweet.Text);
+            message.Tweet = Convert.ToString(Convert.ToString(textBoxTweet.Text).Split(new string[] { "</imagen>" }, StringSplitOptions.None)[0]);
+            message.Tweet = message.Tweet.Substring(0, message.Tweet.Length - 2);
             string resultado = "";
             List<AutomaticMessageModel> tweets = new List<AutomaticMessageModel>();
             bdSQLite.obtenerTweetsAutomatizados(ref resultado, ref tweets, txtUsuarioAccesoTwitter.Text);
-            var valor = tweets.Find(x => x.Tweet == Convert.ToString(textBoxTweet.Text));
+            var valor = tweets.Where(x => x.Tweet == Convert.ToString(message.Tweet)).ToList().Count;
 
-            if (valor == null)
+            if (valor<=1)
             {
-                bdSQLite.updateTweet(message, ref resultado);
+                var valor2 = tweets.Find(x => x.Tweet == Convert.ToString(message.Tweet));
+
+                bdSQLite.deleteImage(Convert.ToString(message.Id), ref resultado);
+                bdSQLite.deleteVideo(Convert.ToString(message.Id), ref resultado);
+
+                foreach (var imageUrl in Convert.ToString(textBoxTweet.Text).Split(new string[] { "</imagen>" }, StringSplitOptions.None)[1].Split(new string[] { "\r\n" }, StringSplitOptions.None))
+                {
+                    if (imageUrl.Contains(".jpg"))
+                        bdSQLite.insertarImage(Convert.ToString(message.Id), imageUrl, ref resultado);
+                }
+
+                foreach (var videoUrl in Convert.ToString(textBoxTweet.Text).Split(new string[] { "</video>" }, StringSplitOptions.None)[1].Split(new string[] { "\r\n" }, StringSplitOptions.None))
+                {
+                    if (videoUrl.Contains(".mp4"))
+                        bdSQLite.insertarVideo(videoUrl, ref resultado);
+                }
+                bdSQLite.updateTweet(message, ref resultado);    
                 construirTabla(ref resultado);
+            
             }
             else
             {
@@ -1532,7 +1754,22 @@ namespace GestiónSeguidoresTwitter
             if (valor == null)
             {
                 Cuentas cuenta = new Cuentas();
-                cuenta.Username = textBoxUsernameCuentas.Text; cuenta.Password = textBoxPasswordCuentas.Text; 
+                cuenta.Username = textBoxUsernameCuentas.Text;
+                cuenta.Status = 1;
+                if (yesFollow.Checked)
+                    cuenta.Follow = true;
+                else
+                    cuenta.Follow = false;
+
+                if (yesFavorites.Checked)
+                    cuenta.Favorites = true;
+                else
+                    cuenta.Favorites = false;
+
+                if (yesAutorice.Checked)
+                    cuenta.Autorizar = true;
+                else
+                    cuenta.Autorizar = false;
                 bdSQLite.insertarCuenta(ref tareasTwitter,cuenta, ref resultado);
                 construirTablaCuentas(ref resultado);
             }
@@ -1569,13 +1806,26 @@ namespace GestiónSeguidoresTwitter
                 cuenta.Id = idCuenta;
             }
             cuenta.Username = Convert.ToString(textBoxUsernameCuentas.Text);
-            cuenta.Password = Convert.ToString(textBoxPasswordCuentas.Text);
+            if (yesFollow.Checked)
+                cuenta.Follow = true;
+            else
+                cuenta.Follow = false;
+
+            if (yesFavorites.Checked)
+                cuenta.Favorites = true;
+            else
+                cuenta.Favorites = false;
+
+            if (yesAutorice.Checked)
+                cuenta.Autorizar = true;
+            else
+                cuenta.Autorizar = false;
             string resultado = "";
             List<Cuentas> cuentas = new List<Cuentas>();
             bdSQLite.obtenerCuentas(ref resultado, ref cuentas);
-            var valor = cuentas.Find(x => x.Username == Convert.ToString(textBoxUsernameCuentas.Text));
+            var valor = cuentas.Select(x => x.Username == Convert.ToString(textBoxUsernameCuentas.Text)).ToList().Count;
 
-            if (valor == null)
+            if (valor<=1)
             {
                 bdSQLite.updateCuenta(cuenta, ref resultado);
                 construirTablaCuentas(ref resultado);
@@ -1591,37 +1841,285 @@ namespace GestiónSeguidoresTwitter
             txtLog.Text = resultado + Environment.NewLine + txtLog.Text;
         }
 
-        private void conectarCuentaButton_Click(object sender, EventArgs e)
+        private void listViewCuentas_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string resultado = "";
-            int id = Convert.ToInt32(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[0].Text);
-            txtUsuarioAccesoTwitter.Text = Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[1].Text);
-            string consumerKey = Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[2].Text);
-            string consumerSecret = Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[3].Text);
-            i = id + 1;
-            if (tareasTwitter[id+1].obtenerTokenTwitter(ref resultado, consumerKey, consumerSecret))
+            textBoxUsernameCuentas.Text = Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[1].Text);
+            if(Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[4].Text) == "NO")
+            { 
+                yesFollow.Checked = false;
+                noFollow.Checked = true;
+            }else
+            { 
+                yesFollow.Checked = true;
+                noFollow.Checked = false;
+            }
+            if (Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[5].Text) == "NO")
             {
-                btObtenerDatosPerfil.Enabled = true;
-                btPerfilVisitarURL.Enabled = true;
-                tabListadeTweetsAutomatizados.Enabled = true;
-                btObtenerDatosPerfil.Text = "Obtener datos del perfil @" +
-                    txtUsuarioAccesoTwitter.Text;
+                yesFavorites.Checked = false;
+                noFavorites.Checked = true;
             }
             else
             {
-                btObtenerDatosPerfil.Enabled = false;
-                btPerfilVisitarURL.Enabled = false;
-                tabListadeTweetsAutomatizados.Enabled = false;
+                yesFavorites.Checked = true;
+                noFavorites.Checked = false;
             }
-            txtLog.Text = resultado;
+            if (Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[6].Text) == "NO")
+            {
+                yesAutorice.Checked = false;
+                noAutorice.Checked = true;
+            }
+            else
+            {
+                yesAutorice.Checked = true;
+                noAutorice.Checked = false;
+            }
 
         }
 
-        private void listViewCuentas_SelectedIndexChanged(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
-            
-            textBoxUsernameCuentas.Text = Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[1].Text);
-            textBoxPasswordCuentas.Text = Convert.ToString(listViewCuentas.Items[listViewCuentas.FocusedItem.Index].SubItems[2].Text);
+            string resultado = "";
+            try
+            {
+                Thread.Sleep(15000);
+                Thread.BeginCriticalRegion();
+                if (executeIntervalTweets)
+                {
+                    //Automatizar tweets aleatorios
+                    if (opTareaAutomatizarTweets.Checked)
+                    {
+                        List<AutomaticMessageModel> tweets = new List<AutomaticMessageModel>();
+                        bdSQLite.obtenerTweetsAutomatizados(ref resultado, ref tweets, txtUsuarioAccesoTwitter.Text);
+                        tareasTwitter[i].generarTweets(tweets, this);
+                        txtLog.Text = System.DateTime.Now + " " + resultado +
+                                Environment.NewLine + txtLog.Text;
+                    }
+                    executeIntervalTweets = false;
+                }
+                else
+                {
+                    
+                    Random rnd2 = new Random();
+                    int i2 = rnd2.Next((Convert.ToInt32(numericUpDown2.Text) * 1000) - (Convert.ToInt32(numericUpDown3.Text) * 1000));
+                    txtLog.Text = "Tiempo Tweets: " + i2 +
+                                        Environment.NewLine + txtLog.Text;
+                    executeIntervalTweets = true;
+                    if (numericUpDown2.Text != "" && numericUpDown3.Text != "")
+                        timer1.Interval = i2;
+                    else
+                        timer1.Interval = 300000; //si no se especifica intervalo: 5 minutos
+                }
+                temporizador.Stop();
+                timer1.Stop();
+                timer2.Start();
+                timer3.Stop();
+                Thread.EndCriticalRegion();
+            }
+            catch (Exception ex)
+            {
+                temporizador.Stop();
+                timer1.Stop();
+                timer2.Start();
+                timer3.Stop();
+
+            }
+
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            string resultado = "";
+            try
+            {
+                Thread.Sleep(15000);
+                Thread.BeginCriticalRegion();
+                if (executeIntervalSeguidores)
+                {
+                    //Automatizar seguidores aleatorios
+                    if (checkBox1.Checked)
+                    {
+                        List<Cuentas> cuentas = new List<Cuentas>();
+                        bdSQLite.obtenerCuentas(ref resultado, ref cuentas);
+                        tareasTwitter[i].generarSeguidores(cuentas, this);
+                        txtLog.Text = System.DateTime.Now + " " + resultado +
+                                Environment.NewLine + txtLog.Text;
+                    }
+                    executeIntervalSeguidores = false;
+                }
+                else
+                {
+
+                    Random rnd3 = new Random();
+                    int i3 = rnd3.Next((Convert.ToInt32(numericUpDown4.Text) * 1000) - (Convert.ToInt32(numericUpDown5.Text) * 1000));
+                    txtLog.Text = "Tiempo Seguidores: " + i3 +
+                                        Environment.NewLine + txtLog.Text;
+                    executeIntervalSeguidores = true;
+                    if (numericUpDown4.Text != "" && numericUpDown5.Text != "")
+                        timer2.Interval = i3;
+                    else
+                        timer2.Interval = 300000; //si no se especifica intervalo: 5 minutos
+                }
+                temporizador.Stop();
+                timer1.Stop();
+                timer2.Stop();
+                timer3.Start();
+                Thread.EndCriticalRegion();
+            }
+            catch (Exception ex)
+            {
+                temporizador.Stop();
+                timer1.Stop();
+                timer2.Stop();
+                timer3.Start();
+
+            }
+        }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            string resultado = "";
+            try
+            {
+                Thread.Sleep(15000);
+                Thread.BeginCriticalRegion();
+                if (executeIntervalRetweetsFavoritos)
+                {
+                    //Automatizar tweets aleatorios
+                    if (checkBox2.Checked)
+                    {
+                        List<Cuentas> cuentas = new List<Cuentas>();
+                        bdSQLite.obtenerCuentas(ref resultado, ref cuentas);
+                        tareasTwitter[i].generarRetweetFavoritos(cuentas, this);
+                        txtLog.Text = System.DateTime.Now + " " + resultado +
+                                Environment.NewLine + txtLog.Text;
+                    }
+                    executeIntervalRetweetsFavoritos = false;
+                }
+                else
+                {
+
+                    Random rnd4 = new Random();
+                    int i4 = rnd4.Next((Convert.ToInt32(numericUpDown6.Text) * 1000) - (Convert.ToInt32(numericUpDown7.Text) * 1000));
+                    txtLog.Text = "Tiempo retweet y favoritos: " + i4 +
+                                        Environment.NewLine + txtLog.Text;
+                    executeIntervalRetweetsFavoritos = true;
+                    if (numericUpDown6.Text != "" && numericUpDown7.Text != "")
+                        timer3.Interval = i4;
+                    else
+                        timer3.Interval = 300000; //si no se especifica intervalo: 5 minutos
+                }
+                temporizador.Start();
+                timer1.Stop();
+                timer2.Stop();
+                timer3.Stop();
+                Thread.EndCriticalRegion();
+            }
+            catch (Exception ex)
+            {
+                temporizador.Start();
+                timer1.Stop();
+                timer2.Stop();
+                timer3.Stop();
+            }
+        }
+
+        private void yesFollow_CheckedChanged(object sender, EventArgs e)
+        {
+            if (yesFollow.Checked)
+            {
+                noFollow.Checked = false;
+            }
+            else
+            {
+                noFollow.Checked = true;
+            }
+        }
+
+        private void noFavorites_CheckedChanged(object sender, EventArgs e)
+        {
+            if (noFavorites.Checked)
+            {
+                yesFavorites.Checked = false;
+            }
+            else
+            {
+                yesFavorites.Checked = true;
+            }
+        }
+
+        private void noFollow_CheckedChanged(object sender, EventArgs e)
+        {
+            if (noFollow.Checked)
+            {
+                yesFollow.Checked = false;
+            }
+            else
+            {
+                yesFollow.Checked = true;
+            }
+        }
+
+        private void yesFavorites_CheckedChanged(object sender, EventArgs e)
+        {
+            if (yesFavorites.Checked)
+            {
+                noFavorites.Checked = false;
+            }
+            else
+            {
+                noFavorites.Checked = true;
+            }
+        }
+
+        private void yesAutorice_CheckedChanged(object sender, EventArgs e)
+        {
+            if (yesAutorice.Checked)
+            {
+                noAutorice.Checked = false;
+            }
+            else
+            {
+                noAutorice.Checked = true;
+            }
+        }
+
+        private void noAutorice_CheckedChanged(object sender, EventArgs e)
+        {
+            if (noAutorice.Checked)
+            {
+                yesAutorice.Checked = false;
+            }
+            else
+            {
+                yesAutorice.Checked = true;
+            }
+        }
+
+        private void subirArchivo_Click(object sender, EventArgs e)
+        {
+            string texto = "";
+            // Create an instance of the open file dialog box.
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            // Set filter options and filter index.
+            openFileDialog1.Filter = "Text Files (.txt)|*.txt";
+            openFileDialog1.FilterIndex = 1;
+
+            openFileDialog1.Multiselect = true;
+
+
+            // Process input if the user clicked OK.
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                // Open the selected file to read.
+                System.IO.StreamReader sr = new
+                             System.IO.StreamReader(openFileDialog1.FileName);
+                texto = sr.ReadToEnd();
+                sr.Close();
+                textBoxTweet.Text = texto;
+                AgregarTweets();
+                textBoxTweet.Text = "";
+            }
         }
     }
 }

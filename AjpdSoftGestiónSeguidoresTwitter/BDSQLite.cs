@@ -35,10 +35,24 @@ namespace GestiónSeguidoresTwitter
                     if (conectarBDSQLite(fichero, contrasena, ref resultadoConexion))
                     {
                         //crear las tablas de SQLite para guardar datos de Twitter
-                        //tabla usuarios
-                        string consultaSQL = "create table cuentas (" +
-                            "id long not null primary key, usuario text, password text, fecha datetime, state integer)";
+                        //tabla images
+                        string consultaSQL = "create table image ("+
+                            "id integer primary key autoincrement, url text, tweetid integer)";
                         SQLiteCommand comandoSQL =
+                            new SQLiteCommand(consultaSQL, conexionSQLite);
+                        comandoSQL.CommandType = CommandType.Text;
+                        comandoSQL.ExecuteNonQuery();
+                        //tabla images
+                        consultaSQL = "create table video (" +
+                            "id integer primary key autoincrement, url text, tweetid integer)";
+                        comandoSQL =
+                            new SQLiteCommand(consultaSQL, conexionSQLite);
+                        comandoSQL.CommandType = CommandType.Text;
+                        comandoSQL.ExecuteNonQuery();
+                        //tabla usuarios
+                        consultaSQL = "create table cuentas (" +
+                            "id long not null primary key, usuario text, status text, fecha datetime, state integer, seguir integer, favoritos integer, autorizar integer)";
+                        comandoSQL =
                             new SQLiteCommand(consultaSQL, conexionSQLite);
                         comandoSQL.CommandType = CommandType.Text;
                         comandoSQL.ExecuteNonQuery();
@@ -158,12 +172,21 @@ namespace GestiónSeguidoresTwitter
         }
 
         //insertar nuevo seguidor en BD SQLite
-        public void insertarTweet(string tweet, ref string resultado, string idCuenta)
+        public void insertarTweet(string tweet, ref string resultado, string idCuenta, List<string> imagenes, List<string> videos)
         {
             string consultaSQL =
                 "insert into tweets (id,tweet,status,fecha,state,idCuenta) values ((select count(*) from tweets),@tweet,@status,@fecha,@state,@idCuenta)";
             try
             {
+                foreach (string imagen in imagenes)
+                {
+                    this.insertarImage(imagen,ref resultado);
+                }
+
+                foreach (string video in videos)
+                {
+                    this.insertarVideo(video, ref resultado);
+                }
 
                 SQLiteParameter parametroTweet = new SQLiteParameter();
                 parametroTweet.ParameterName = "@tweet";
@@ -212,6 +235,269 @@ namespace GestiónSeguidoresTwitter
             }
         }
 
+
+        //insertar nuevo seguidor en BD SQLite
+        public void obtenerImagen(ref string resultado, ref List<string> list, string tweetid)
+        {
+            List<string> urls = new List<string>();
+            string consultaSQL =
+                "select url from image where tweetid = @tweetid";
+            try {
+
+                SQLiteParameter parametroTweetid = new SQLiteParameter();
+                parametroTweetid.ParameterName = "@tweetid";
+                parametroTweetid.DbType = DbType.String;
+                parametroTweetid.Value = Convert.ToString(tweetid);
+
+                SQLiteCommand comandoSQL =
+                        new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroTweetid);
+                SQLiteDataReader reader = comandoSQL.ExecuteReader();
+                while (reader.Read())
+                {
+                    string url = Convert.ToString(reader["url"]);
+                    urls.Add(url);
+                }
+                resultado = System.DateTime.Now + " " +
+                    "imagenes obtenidas exitosamente";
+                list = urls;
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite extraer imagenes de tweet: " +
+                    error.Message;
+            }
+
+        }
+
+        public void deleteImage(string tweetid, ref string resultado)
+        {
+            string consultaSQL =
+                "delete from image where tweetid = @tweetid";
+            try
+            { 
+                SQLiteParameter parametroTweetid = new SQLiteParameter();
+                parametroTweetid.ParameterName = "@tweetid";
+                parametroTweetid.DbType = DbType.String;
+                parametroTweetid.Value = Convert.ToString(tweetid);
+
+                SQLiteCommand comandoSQL =
+                        new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroTweetid);
+                comandoSQL.ExecuteNonQuery();
+                resultado = System.DateTime.Now + " " +
+                    "Imagenes eliminados del tweet: " +
+                    Convert.ToString(tweetid);
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite insertar imagen de tweet: " +
+                    error.Message;
+            }
+
+        }
+
+        public void insertarImage(string url, ref string resultado)
+        {
+            string consultaSQL =
+            "insert into image (url, tweetid) values (@url, (select count(*) from tweets))";
+
+            try
+            {
+                SQLiteParameter parametroUrl = new SQLiteParameter();
+                parametroUrl.ParameterName = "@url";
+                parametroUrl.DbType = DbType.String;
+                parametroUrl.Value = Convert.ToString(url);
+                
+                SQLiteCommand comandoSQL =
+                    new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroUrl);
+                comandoSQL.ExecuteNonQuery();
+                resultado = System.DateTime.Now + " " +
+                    "Insertado nueva imagen en BD SQLite [" +
+                    Convert.ToString(url) + "]";
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite insertar imagen: " +
+                    error.Message;
+            }
+
+        }
+
+        public void insertarImage(string tweetid, string url, ref string resultado)
+        {
+            string consultaSQL =
+            "insert into image (url, tweetid) values (@url, @tweetid)";
+
+            try
+            {
+                SQLiteParameter parametroUrl = new SQLiteParameter();
+                parametroUrl.ParameterName = "@url";
+                parametroUrl.DbType = DbType.String;
+                parametroUrl.Value = Convert.ToString(url);
+
+                SQLiteParameter parametroTweetid = new SQLiteParameter();
+                parametroTweetid.ParameterName = "@tweetid";
+                parametroTweetid.DbType = DbType.Int32;
+                parametroTweetid.Value = Convert.ToInt32(tweetid);
+
+                SQLiteCommand comandoSQL =
+                    new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroUrl);
+                comandoSQL.Parameters.Add(parametroTweetid);
+                comandoSQL.ExecuteNonQuery();
+                resultado = System.DateTime.Now + " " +
+                    "Insertado nueva imagen en BD SQLite [" +
+                    Convert.ToString(url) + "]";
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite insertar imagen: " +
+                    error.Message;
+            }
+
+        }
+
+        //insertar nuevo seguidor en BD SQLite
+        public void obtenerVideos(ref string resultado, ref List<string> list, string tweetid)
+        {
+            List<string> urls = new List<string>();
+            string consultaSQL =
+                "select url from video where tweetid = @tweetid";
+            try
+            {
+
+                SQLiteParameter parametroTweetid = new SQLiteParameter();
+                parametroTweetid.ParameterName = "@tweetid";
+                parametroTweetid.DbType = DbType.String;
+                parametroTweetid.Value = Convert.ToString(tweetid);
+
+                SQLiteCommand comandoSQL =
+                        new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroTweetid);
+                SQLiteDataReader reader = comandoSQL.ExecuteReader();
+                while (reader.Read())
+                {
+                    string url = Convert.ToString(reader["url"]);
+                    urls.Add(url);
+                }
+                resultado = System.DateTime.Now + " " +
+                    "Videos obtenidos exitosamente";
+                list = urls;
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite extraer videos de tweet: " +
+                    error.Message;
+            }
+
+        }
+
+        public void deleteVideo(string tweetid, ref string resultado)
+        {
+            string consultaSQL =
+                "delete from video where tweetid = @tweetid";
+            try
+            {
+                SQLiteParameter parametroTweetid = new SQLiteParameter();
+                parametroTweetid.ParameterName = "@tweetid";
+                parametroTweetid.DbType = DbType.String;
+                parametroTweetid.Value = Convert.ToString(tweetid);
+
+                SQLiteCommand comandoSQL =
+                        new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroTweetid);
+                comandoSQL.ExecuteNonQuery();
+                resultado = System.DateTime.Now + " " +
+                    "Video eliminados del tweet: " +
+                    Convert.ToString(tweetid);
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite insertar video de tweet: " +
+                    error.Message;
+            }
+
+        }
+
+        public void insertarVideo(string url, ref string resultado)
+        {
+            string consultaSQL =
+            "insert into video (url, tweetid) values (@url, (select count(*) from tweets))";
+
+            try
+            {
+                SQLiteParameter parametroUrl = new SQLiteParameter();
+                parametroUrl.ParameterName = "@url";
+                parametroUrl.DbType = DbType.String;
+                parametroUrl.Value = Convert.ToString(url);
+
+                SQLiteCommand comandoSQL =
+                    new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroUrl);
+                comandoSQL.ExecuteNonQuery();
+                resultado = System.DateTime.Now + " " +
+                    "Insertado nuevo video en BD SQLite [" +
+                    Convert.ToString(url) + "]";
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite insertar video: " +
+                    error.Message;
+            }
+
+        }
+
+        public void insertarVideo(string tweetid, string url, ref string resultado)
+        {
+            string consultaSQL =
+            "insert into video (url, tweetid) values (@url, @tweetid)";
+
+            try
+            {
+                SQLiteParameter parametroUrl = new SQLiteParameter();
+                parametroUrl.ParameterName = "@url";
+                parametroUrl.DbType = DbType.String;
+                parametroUrl.Value = Convert.ToString(url);
+
+                SQLiteParameter parametroTweetid = new SQLiteParameter();
+                parametroTweetid.ParameterName = "@tweetid";
+                parametroTweetid.DbType = DbType.Int32;
+                parametroTweetid.Value = Convert.ToInt32(tweetid);
+
+                SQLiteCommand comandoSQL =
+                    new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroUrl);
+                comandoSQL.Parameters.Add(parametroTweetid);
+                comandoSQL.ExecuteNonQuery();
+                resultado = System.DateTime.Now + " " +
+                    "Insertado nueva video en BD SQLite [" +
+                    Convert.ToString(url) + "]";
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite insertar video: " +
+                    error.Message;
+            }
+
+        }
         //insertar nuevo seguidor en BD SQLite
         public void insertarSeguidor(long idSeguidor, ref string resultado)
         {
@@ -307,6 +593,40 @@ namespace GestiónSeguidoresTwitter
             }
         }
 
+        public void updateStatusSeguidores(Cuentas account, ref string resultado)
+        {
+            string consultaSQL =
+                    "update cuentas set status = @status where id = @idCuenta";
+            try
+            {
+                SQLiteParameter parametroidTweet = new SQLiteParameter();
+                parametroidTweet.ParameterName = "@idCuenta";
+                parametroidTweet.DbType = DbType.Int32;
+                parametroidTweet.Value = Convert.ToInt32(account.Id);
+
+                SQLiteParameter parametroTweet = new SQLiteParameter();
+                parametroTweet.ParameterName = "@status";
+                parametroTweet.DbType = DbType.Int32;
+                parametroTweet.Value = Convert.ToInt32(account.Status);
+
+                SQLiteCommand comandoSQL =
+                            new SQLiteCommand(consultaSQL, conexionSQLite);
+                comandoSQL.CommandType = CommandType.Text;
+                comandoSQL.Parameters.Add(parametroidTweet);
+                comandoSQL.Parameters.Add(parametroTweet);
+                comandoSQL.ExecuteNonQuery();
+                resultado = System.DateTime.Now + " " +
+                                    "Actualizado tweet automatico en BD SQLite [" +
+                                    Convert.ToString(account.Id) + "]";
+            }
+            catch (Exception error)
+            {
+                resultado = System.DateTime.Now + " " +
+                    "Error SQLite eliminar tweet automatico: " +
+                    error.Message;
+            }
+        }
+
         public void updateStatus(AutomaticMessageModel automaticMessage, ref string resultado)
         {
             string consultaSQL =
@@ -357,9 +677,12 @@ namespace GestiónSeguidoresTwitter
                     Cuentas cuenta = new Cuentas();
                     cuenta.Id = Convert.ToInt32(reader["id"]); 
                     cuenta.Username = Convert.ToString(reader["usuario"]);
-                    cuenta.Password = Convert.ToString(reader["password"]);
+                    cuenta.Status = Convert.ToInt32(reader["status"]);
                     cuenta.Fecha = Convert.ToDateTime(reader["fecha"]);
                     cuenta.State = Convert.ToInt32(reader["state"]);
+                    cuenta.Follow = Convert.ToInt32(reader["seguir"]) == 0 ? false : true;
+                    cuenta.Favorites = Convert.ToInt32(reader["favoritos"]) == 0 ? false : true;
+                    cuenta.Autorizar = Convert.ToInt32(reader["autorizar"]) == 0 ? false : true;
                     cuentas.Add(cuenta);
                 }
                 resultado = System.DateTime.Now + " " +
@@ -419,7 +742,7 @@ namespace GestiónSeguidoresTwitter
         public void insertarCuenta(ref Dictionary<int, TareasTwitter> tareasTwitter, Cuentas cuenta, ref string resultado)
         {
             string consultaSQL =
-                "insert into cuentas (id,usuario,password,fecha,state) values ((select count(*) from cuentas),@usuario,@password,@fecha,@state)";
+                "insert into cuentas (id,usuario,status,fecha,state,seguir,favoritos,autorizar) values ((select count(*) from cuentas),@usuario,@status,@fecha,@state,@seguir,@favoritos,@autorizar)";
             try
             {
 
@@ -428,10 +751,10 @@ namespace GestiónSeguidoresTwitter
                 parametroUsuario.DbType = DbType.String;
                 parametroUsuario.Value = Convert.ToString(cuenta.Username);
 
-                SQLiteParameter parametroPassword = new SQLiteParameter();
-                parametroPassword.ParameterName = "@password";
-                parametroPassword.DbType = DbType.String;
-                parametroPassword.Value = Convert.ToString(cuenta.Password);
+                SQLiteParameter parametroStatus = new SQLiteParameter();
+                parametroStatus.ParameterName = "@status";
+                parametroStatus.DbType = DbType.String;
+                parametroStatus.Value = Convert.ToString(cuenta.Status);
 
                 SQLiteParameter parameterFecha = new SQLiteParameter();
                 parameterFecha.ParameterName = "@fecha";
@@ -443,13 +766,31 @@ namespace GestiónSeguidoresTwitter
                 parametroState.DbType = DbType.Int32;
                 parametroState.Value = Convert.ToInt32("1");
 
+                SQLiteParameter parametroSeguir = new SQLiteParameter();
+                parametroSeguir.ParameterName = "@seguir";
+                parametroSeguir.DbType = DbType.Int32;
+                parametroSeguir.Value = Convert.ToInt32(cuenta.Follow ? 1 : 0);
+
+                SQLiteParameter parametroFavoritos = new SQLiteParameter();
+                parametroFavoritos.ParameterName = "@favoritos";
+                parametroFavoritos.DbType = DbType.Int32;
+                parametroFavoritos.Value = Convert.ToInt32(cuenta.Favorites ? 1 : 0);
+
+                SQLiteParameter parametroAutorizar = new SQLiteParameter();
+                parametroAutorizar.ParameterName = "@autorizar";
+                parametroAutorizar.DbType = DbType.Int32;
+                parametroAutorizar.Value = Convert.ToInt32(cuenta.Autorizar ? 1 : 0);
+
                 SQLiteCommand comandoSQL =
                      new SQLiteCommand(consultaSQL, conexionSQLite);
                 comandoSQL.CommandType = CommandType.Text;
                 comandoSQL.Parameters.Add(parametroUsuario);
-                comandoSQL.Parameters.Add(parametroPassword);
+                comandoSQL.Parameters.Add(parametroStatus);
                 comandoSQL.Parameters.Add(parameterFecha);
                 comandoSQL.Parameters.Add(parametroState);
+                comandoSQL.Parameters.Add(parametroSeguir);
+                comandoSQL.Parameters.Add(parametroFavoritos);
+                comandoSQL.Parameters.Add(parametroAutorizar);
                 comandoSQL.ExecuteNonQuery();
 
                 comandoSQL.CommandText = "select last_insert_rowid()";
@@ -499,7 +840,7 @@ namespace GestiónSeguidoresTwitter
         public void updateCuenta(Cuentas cuenta, ref string resultado)
         {
             string consultaSQL =
-                "update cuentas set usuario = @usuario, password = @password where id = @idCuenta";
+                "update cuentas set  usuario = @usuario, seguir = @seguir, favoritos = @favoritos, autorizar = @autorizar  where id = @idCuenta";
             try
             {
                 SQLiteParameter parametroidCuenta = new SQLiteParameter();
@@ -512,17 +853,29 @@ namespace GestiónSeguidoresTwitter
                 parametroUsuario.DbType = DbType.String;
                 parametroUsuario.Value = Convert.ToString(cuenta.Username);
 
-                SQLiteParameter parametroPassword = new SQLiteParameter();
-                parametroPassword.ParameterName = "@password";
-                parametroPassword.DbType = DbType.String;
-                parametroPassword.Value = Convert.ToString(cuenta.Password);
-                
+                SQLiteParameter parametroSeguir = new SQLiteParameter();
+                parametroSeguir.ParameterName = "@seguir";
+                parametroSeguir.DbType = DbType.Int32;
+                parametroSeguir.Value = Convert.ToInt32(cuenta.Follow ? 1:0);
+
+                SQLiteParameter parametroFavoritos = new SQLiteParameter();
+                parametroFavoritos.ParameterName = "@favoritos";
+                parametroFavoritos.DbType = DbType.Int32;
+                parametroFavoritos.Value = Convert.ToInt32(cuenta.Favorites ? 1 : 0);
+
+                SQLiteParameter parametroAutorizar = new SQLiteParameter();
+                parametroAutorizar.ParameterName = "@autorizar";
+                parametroAutorizar.DbType = DbType.Int32;
+                parametroAutorizar.Value = Convert.ToInt32(cuenta.Autorizar ? 1 : 0);
+
                 SQLiteCommand comandoSQL =
                             new SQLiteCommand(consultaSQL, conexionSQLite);
                 comandoSQL.CommandType = CommandType.Text;
                 comandoSQL.Parameters.Add(parametroidCuenta);
                 comandoSQL.Parameters.Add(parametroUsuario);
-                comandoSQL.Parameters.Add(parametroPassword);
+                comandoSQL.Parameters.Add(parametroSeguir);
+                comandoSQL.Parameters.Add(parametroFavoritos);
+                comandoSQL.Parameters.Add(parametroAutorizar);
                 comandoSQL.ExecuteNonQuery();
                 resultado = System.DateTime.Now + " " +
                                     "Actualizado cuenta automatico en BD SQLite [" +

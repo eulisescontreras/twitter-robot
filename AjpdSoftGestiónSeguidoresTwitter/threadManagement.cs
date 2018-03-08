@@ -32,6 +32,7 @@ namespace GestiónSeguidoresTwitter
                     listProcess[i].Start();
                     
                 }
+                this.Visible = false;
             }
             else
             {

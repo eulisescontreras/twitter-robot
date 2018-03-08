@@ -107,9 +107,27 @@
             this.label11 = new System.Windows.Forms.Label();
             this.tabTareasAutomaticas = new System.Windows.Forms.TabPage();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
+            this.label36 = new System.Windows.Forms.Label();
+            this.label37 = new System.Windows.Forms.Label();
+            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
+            this.label34 = new System.Windows.Forms.Label();
+            this.label35 = new System.Windows.Forms.Label();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.label32 = new System.Windows.Forms.Label();
             this.opTareaAutomatizarTweets = new System.Windows.Forms.CheckBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.btMinimizar = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label18 = new System.Windows.Forms.Label();
             this.txtTareaAutomaticaIntervalo = new System.Windows.Forms.NumericUpDown();
             this.label17 = new System.Windows.Forms.Label();
@@ -151,8 +169,15 @@
             this.ButtonAgregar = new System.Windows.Forms.Button();
             this.label30 = new System.Windows.Forms.Label();
             this.ListadeCuentas = new System.Windows.Forms.TabPage();
-            this.label32 = new System.Windows.Forms.Label();
-            this.textBoxPasswordCuentas = new System.Windows.Forms.TextBox();
+            this.noAutorice = new System.Windows.Forms.CheckBox();
+            this.yesAutorice = new System.Windows.Forms.CheckBox();
+            this.Autorizado = new System.Windows.Forms.Label();
+            this.noFavorites = new System.Windows.Forms.CheckBox();
+            this.yesFavorites = new System.Windows.Forms.CheckBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.noFollow = new System.Windows.Forms.CheckBox();
+            this.yesFollow = new System.Windows.Forms.CheckBox();
+            this.label38 = new System.Windows.Forms.Label();
             this.textBoxUsernameCuentas = new System.Windows.Forms.TextBox();
             this.MostrarCuentas = new System.Windows.Forms.Button();
             this.EliminarCuentas = new System.Windows.Forms.Button();
@@ -192,6 +217,10 @@
             this.mnuDesactivarTareasAutomaticas = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuCerrar = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.subirArchivo = new System.Windows.Forms.Button();
             this.tabListadeTweetsAutomatizados.SuspendLayout();
             this.tabInfoPerfil.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -208,7 +237,14 @@
             this.groupBox2.SuspendLayout();
             this.tabTareasAutomaticas.SuspendLayout();
             this.groupBox9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             this.groupBox8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtTareaAutomaticaIntervalo)).BeginInit();
             this.groupBox7.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -1086,23 +1122,267 @@
             // 
             this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox9.Controls.Add(this.numericUpDown6);
+            this.groupBox9.Controls.Add(this.numericUpDown7);
+            this.groupBox9.Controls.Add(this.label36);
+            this.groupBox9.Controls.Add(this.label37);
+            this.groupBox9.Controls.Add(this.numericUpDown4);
+            this.groupBox9.Controls.Add(this.numericUpDown5);
+            this.groupBox9.Controls.Add(this.label34);
+            this.groupBox9.Controls.Add(this.label35);
+            this.groupBox9.Controls.Add(this.numericUpDown2);
+            this.groupBox9.Controls.Add(this.checkBox2);
+            this.groupBox9.Controls.Add(this.checkBox1);
+            this.groupBox9.Controls.Add(this.numericUpDown3);
+            this.groupBox9.Controls.Add(this.label32);
             this.groupBox9.Controls.Add(this.opTareaAutomatizarTweets);
-            this.groupBox9.Location = new System.Drawing.Point(16, 392);
+            this.groupBox9.Controls.Add(this.label33);
+            this.groupBox9.Controls.Add(this.panel1);
+            this.groupBox9.Controls.Add(this.panel3);
+            this.groupBox9.Controls.Add(this.panel2);
+            this.groupBox9.Location = new System.Drawing.Point(16, 377);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(828, 60);
+            this.groupBox9.Size = new System.Drawing.Size(828, 82);
             this.groupBox9.TabIndex = 21;
             this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Automatizar tweets de la lista";
+            this.groupBox9.Text = "Automatizar tareas generales";
+            // 
+            // numericUpDown6
+            // 
+            this.numericUpDown6.Location = new System.Drawing.Point(681, 19);
+            this.numericUpDown6.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Name = "numericUpDown6";
+            this.numericUpDown6.Size = new System.Drawing.Size(69, 20);
+            this.numericUpDown6.TabIndex = 24;
+            this.numericUpDown6.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            // 
+            // numericUpDown7
+            // 
+            this.numericUpDown7.Location = new System.Drawing.Point(605, 20);
+            this.numericUpDown7.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown7.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown7.Name = "numericUpDown7";
+            this.numericUpDown7.Size = new System.Drawing.Size(69, 20);
+            this.numericUpDown7.TabIndex = 23;
+            this.numericUpDown7.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(755, 21);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(53, 13);
+            this.label36.TabIndex = 22;
+            this.label36.Text = "segundos";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(550, 21);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(48, 13);
+            this.label37.TabIndex = 21;
+            this.label37.Text = "Intervalo";
+            // 
+            // numericUpDown4
+            // 
+            this.numericUpDown4.Location = new System.Drawing.Point(410, 19);
+            this.numericUpDown4.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown4.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown4.Name = "numericUpDown4";
+            this.numericUpDown4.Size = new System.Drawing.Size(69, 20);
+            this.numericUpDown4.TabIndex = 20;
+            this.numericUpDown4.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            // 
+            // numericUpDown5
+            // 
+            this.numericUpDown5.Location = new System.Drawing.Point(332, 19);
+            this.numericUpDown5.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown5.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown5.Name = "numericUpDown5";
+            this.numericUpDown5.Size = new System.Drawing.Size(69, 20);
+            this.numericUpDown5.TabIndex = 19;
+            this.numericUpDown5.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(481, 21);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(53, 13);
+            this.label34.TabIndex = 18;
+            this.label34.Text = "segundos";
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(283, 21);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(48, 13);
+            this.label35.TabIndex = 17;
+            this.label35.Text = "Intervalo";
+            // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.Location = new System.Drawing.Point(127, 19);
+            this.numericUpDown2.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(69, 20);
+            this.numericUpDown2.TabIndex = 16;
+            this.numericUpDown2.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(583, 52);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(175, 17);
+            this.checkBox2.TabIndex = 3;
+            this.checkBox2.Text = "Automatizar retweets y favoritos";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(345, 52);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(135, 17);
+            this.checkBox1.TabIndex = 2;
+            this.checkBox1.Text = "Automatizar seguidores";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.Location = new System.Drawing.Point(50, 19);
+            this.numericUpDown3.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(69, 20);
+            this.numericUpDown3.TabIndex = 15;
+            this.numericUpDown3.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(204, 21);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(53, 13);
+            this.label32.TabIndex = 14;
+            this.label32.Text = "segundos";
             // 
             // opTareaAutomatizarTweets
             // 
             this.opTareaAutomatizarTweets.AutoSize = true;
-            this.opTareaAutomatizarTweets.Location = new System.Drawing.Point(67, 28);
+            this.opTareaAutomatizarTweets.Location = new System.Drawing.Point(75, 52);
             this.opTareaAutomatizarTweets.Name = "opTareaAutomatizarTweets";
             this.opTareaAutomatizarTweets.Size = new System.Drawing.Size(115, 17);
             this.opTareaAutomatizarTweets.TabIndex = 1;
             this.opTareaAutomatizarTweets.Text = "Automatizar tweets";
             this.opTareaAutomatizarTweets.UseVisualStyleBackColor = true;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(1, 21);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(48, 13);
+            this.label33.TabIndex = 13;
+            this.label33.Text = "Intervalo";
+            // 
+            // panel1
+            // 
+            this.panel1.Location = new System.Drawing.Point(0, 14);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(264, 62);
+            this.panel1.TabIndex = 2;
+            // 
+            // panel3
+            // 
+            this.panel3.Location = new System.Drawing.Point(548, 13);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(264, 62);
+            this.panel3.TabIndex = 4;
+            // 
+            // panel2
+            // 
+            this.panel2.Location = new System.Drawing.Point(275, 14);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(264, 62);
+            this.panel2.TabIndex = 3;
             // 
             // btMinimizar
             // 
@@ -1118,6 +1398,7 @@
             // 
             this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox8.Controls.Add(this.numericUpDown1);
             this.groupBox8.Controls.Add(this.label18);
             this.groupBox8.Controls.Add(this.txtTareaAutomaticaIntervalo);
             this.groupBox8.Controls.Add(this.label17);
@@ -1128,6 +1409,28 @@
             this.groupBox8.TabIndex = 21;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Intervalo comprobación tareas automáticas ";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(153, 19);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(69, 20);
+            this.numericUpDown1.TabIndex = 12;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
             // 
             // label18
             // 
@@ -1158,7 +1461,7 @@
             this.txtTareaAutomaticaIntervalo.Size = new System.Drawing.Size(69, 20);
             this.txtTareaAutomaticaIntervalo.TabIndex = 10;
             this.txtTareaAutomaticaIntervalo.Value = new decimal(new int[] {
-            300,
+            60,
             0,
             0,
             0});
@@ -1166,7 +1469,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(137, 21);
+            this.label17.Location = new System.Drawing.Point(228, 21);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(53, 13);
             this.label17.TabIndex = 9;
@@ -1493,6 +1796,7 @@
             // 
             // tabTweetsAutomatizados
             // 
+            this.tabTweetsAutomatizados.Controls.Add(this.subirArchivo);
             this.tabTweetsAutomatizados.Controls.Add(this.listViewTweetsAutomatizados);
             this.tabTweetsAutomatizados.Controls.Add(this.textBoxTweet);
             this.tabTweetsAutomatizados.Controls.Add(this.button1);
@@ -1519,7 +1823,7 @@
             // 
             // textBoxTweet
             // 
-            this.textBoxTweet.Location = new System.Drawing.Point(13, 393);
+            this.textBoxTweet.Location = new System.Drawing.Point(13, 376);
             this.textBoxTweet.Multiline = true;
             this.textBoxTweet.Name = "textBoxTweet";
             this.textBoxTweet.Size = new System.Drawing.Size(512, 65);
@@ -1568,7 +1872,7 @@
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(10, 377);
+            this.label30.Location = new System.Drawing.Point(10, 360);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(37, 13);
             this.label30.TabIndex = 1;
@@ -1576,8 +1880,15 @@
             // 
             // ListadeCuentas
             // 
-            this.ListadeCuentas.Controls.Add(this.label32);
-            this.ListadeCuentas.Controls.Add(this.textBoxPasswordCuentas);
+            this.ListadeCuentas.Controls.Add(this.noAutorice);
+            this.ListadeCuentas.Controls.Add(this.yesAutorice);
+            this.ListadeCuentas.Controls.Add(this.Autorizado);
+            this.ListadeCuentas.Controls.Add(this.noFavorites);
+            this.ListadeCuentas.Controls.Add(this.yesFavorites);
+            this.ListadeCuentas.Controls.Add(this.label39);
+            this.ListadeCuentas.Controls.Add(this.noFollow);
+            this.ListadeCuentas.Controls.Add(this.yesFollow);
+            this.ListadeCuentas.Controls.Add(this.label38);
             this.ListadeCuentas.Controls.Add(this.textBoxUsernameCuentas);
             this.ListadeCuentas.Controls.Add(this.MostrarCuentas);
             this.ListadeCuentas.Controls.Add(this.EliminarCuentas);
@@ -1593,25 +1904,102 @@
             this.ListadeCuentas.Text = "Lista de cuentas";
             this.ListadeCuentas.UseVisualStyleBackColor = true;
             // 
-            // label32
+            // noAutorice
             // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(19, 432);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(53, 13);
-            this.label32.TabIndex = 17;
-            this.label32.Text = "Password";
+            this.noAutorice.AutoSize = true;
+            this.noAutorice.Location = new System.Drawing.Point(373, 450);
+            this.noAutorice.Name = "noAutorice";
+            this.noAutorice.Size = new System.Drawing.Size(42, 17);
+            this.noAutorice.TabIndex = 24;
+            this.noAutorice.Text = "NO";
+            this.noAutorice.UseVisualStyleBackColor = true;
+            this.noAutorice.CheckedChanged += new System.EventHandler(this.noAutorice_CheckedChanged);
             // 
-            // textBoxPasswordCuentas
+            // yesAutorice
             // 
-            this.textBoxPasswordCuentas.Location = new System.Drawing.Point(22, 448);
-            this.textBoxPasswordCuentas.Name = "textBoxPasswordCuentas";
-            this.textBoxPasswordCuentas.Size = new System.Drawing.Size(521, 20);
-            this.textBoxPasswordCuentas.TabIndex = 16;
+            this.yesAutorice.AutoSize = true;
+            this.yesAutorice.Location = new System.Drawing.Point(331, 450);
+            this.yesAutorice.Name = "yesAutorice";
+            this.yesAutorice.Size = new System.Drawing.Size(36, 17);
+            this.yesAutorice.TabIndex = 23;
+            this.yesAutorice.Text = "SI";
+            this.yesAutorice.UseVisualStyleBackColor = true;
+            this.yesAutorice.CheckedChanged += new System.EventHandler(this.yesAutorice_CheckedChanged);
+            // 
+            // Autorizado
+            // 
+            this.Autorizado.AutoSize = true;
+            this.Autorizado.Location = new System.Drawing.Point(328, 434);
+            this.Autorizado.Name = "Autorizado";
+            this.Autorizado.Size = new System.Drawing.Size(57, 13);
+            this.Autorizado.TabIndex = 22;
+            this.Autorizado.Text = "Autorizado";
+            // 
+            // noFavorites
+            // 
+            this.noFavorites.AutoSize = true;
+            this.noFavorites.Location = new System.Drawing.Point(221, 450);
+            this.noFavorites.Name = "noFavorites";
+            this.noFavorites.Size = new System.Drawing.Size(42, 17);
+            this.noFavorites.TabIndex = 21;
+            this.noFavorites.Text = "NO";
+            this.noFavorites.UseVisualStyleBackColor = true;
+            this.noFavorites.CheckedChanged += new System.EventHandler(this.noFavorites_CheckedChanged);
+            // 
+            // yesFavorites
+            // 
+            this.yesFavorites.AutoSize = true;
+            this.yesFavorites.Location = new System.Drawing.Point(179, 450);
+            this.yesFavorites.Name = "yesFavorites";
+            this.yesFavorites.Size = new System.Drawing.Size(36, 17);
+            this.yesFavorites.TabIndex = 20;
+            this.yesFavorites.Text = "SI";
+            this.yesFavorites.UseVisualStyleBackColor = true;
+            this.yesFavorites.CheckedChanged += new System.EventHandler(this.yesFavorites_CheckedChanged);
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(178, 434);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(50, 13);
+            this.label39.TabIndex = 19;
+            this.label39.Text = "Favoritos";
+            // 
+            // noFollow
+            // 
+            this.noFollow.AutoSize = true;
+            this.noFollow.Location = new System.Drawing.Point(64, 450);
+            this.noFollow.Name = "noFollow";
+            this.noFollow.Size = new System.Drawing.Size(42, 17);
+            this.noFollow.TabIndex = 18;
+            this.noFollow.Text = "NO";
+            this.noFollow.UseVisualStyleBackColor = true;
+            this.noFollow.CheckedChanged += new System.EventHandler(this.noFollow_CheckedChanged);
+            // 
+            // yesFollow
+            // 
+            this.yesFollow.AutoSize = true;
+            this.yesFollow.Location = new System.Drawing.Point(22, 450);
+            this.yesFollow.Name = "yesFollow";
+            this.yesFollow.Size = new System.Drawing.Size(36, 17);
+            this.yesFollow.TabIndex = 17;
+            this.yesFollow.Text = "SI";
+            this.yesFollow.UseVisualStyleBackColor = true;
+            this.yesFollow.CheckedChanged += new System.EventHandler(this.yesFollow_CheckedChanged);
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(19, 434);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(37, 13);
+            this.label38.TabIndex = 16;
+            this.label38.Text = "Seguir";
             // 
             // textBoxUsernameCuentas
             // 
-            this.textBoxUsernameCuentas.Location = new System.Drawing.Point(22, 403);
+            this.textBoxUsernameCuentas.Location = new System.Drawing.Point(22, 397);
             this.textBoxUsernameCuentas.Name = "textBoxUsernameCuentas";
             this.textBoxUsernameCuentas.Size = new System.Drawing.Size(521, 20);
             this.textBoxUsernameCuentas.TabIndex = 15;
@@ -1659,7 +2047,7 @@
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(19, 387);
+            this.label31.Location = new System.Drawing.Point(19, 373);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(55, 13);
             this.label31.TabIndex = 10;
@@ -1978,6 +2366,31 @@
             this.mnuCerrar.Text = "Cerrar";
             this.mnuCerrar.Click += new System.EventHandler(this.mnuCerrar_Click);
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 30000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 30000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // timer3
+            // 
+            this.timer3.Interval = 30000;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
+            // 
+            // subirArchivo
+            // 
+            this.subirArchivo.Location = new System.Drawing.Point(559, 464);
+            this.subirArchivo.Name = "subirArchivo";
+            this.subirArchivo.Size = new System.Drawing.Size(247, 40);
+            this.subirArchivo.TabIndex = 9;
+            this.subirArchivo.Text = "Subir Archivo";
+            this.subirArchivo.UseVisualStyleBackColor = true;
+            this.subirArchivo.Click += new System.EventHandler(this.subirArchivo_Click);
+            // 
             // formTwitter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2013,8 +2426,15 @@
             this.tabTareasAutomaticas.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtTareaAutomaticaIntervalo)).EndInit();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
@@ -2051,7 +2471,7 @@
         private System.Windows.Forms.Button btEliminarMensajeDirecto;
         private System.Windows.Forms.Button btResponderMensajeDirecto;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox txtUsuarioAccesoTwitter;
+        public System.Windows.Forms.TextBox txtUsuarioAccesoTwitter;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btConectarTwitter;
         private System.Windows.Forms.TabPage tabSeguidores;
@@ -2197,14 +2617,43 @@
         private System.Windows.Forms.CheckBox opTareaAutomatizarTweets;
         private System.Windows.Forms.TabPage ListadeCuentas;
         private System.Windows.Forms.ListView listViewCuentas;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.TextBox textBoxPasswordCuentas;
         private System.Windows.Forms.TextBox textBoxUsernameCuentas;
         private System.Windows.Forms.Button MostrarCuentas;
         private System.Windows.Forms.Button EliminarCuentas;
         private System.Windows.Forms.Button EditarCuentas;
         private System.Windows.Forms.Button AgregarCuenta;
         private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown numericUpDown6;
+        private System.Windows.Forms.NumericUpDown numericUpDown7;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.NumericUpDown numericUpDown4;
+        private System.Windows.Forms.NumericUpDown numericUpDown5;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.NumericUpDown numericUpDown3;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer timer3;
+        private System.Windows.Forms.CheckBox noFavorites;
+        private System.Windows.Forms.CheckBox yesFavorites;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.CheckBox noFollow;
+        private System.Windows.Forms.CheckBox yesFollow;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.CheckBox noAutorice;
+        private System.Windows.Forms.CheckBox yesAutorice;
+        private System.Windows.Forms.Label Autorizado;
+        private System.Windows.Forms.Button subirArchivo;
     }
 }
 
