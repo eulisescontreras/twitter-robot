@@ -59,3 +59,11 @@ C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguido
 C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\System.Reactive.Interfaces.xml
 C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\System.Reactive.Linq.xml
 C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\System.Reactive.PlatformServices.xml
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\EntityFramework.dll
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\System.Data.SQLite.dll
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\System.Data.SQLite.EF6.dll
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\EntityFramework.xml
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\bin\Debug\System.Data.SQLite.xml

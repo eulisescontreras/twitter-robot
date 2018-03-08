@@ -81,13 +81,13 @@ namespace GestiónSeguidoresTwitter
 
         //Conectar con API de Twitter mediante PIN para obtener token de acceso
         //devuelve true si la conexión se ha realizado correctamente
-        public bool obtenerTokenTwitter(ref string resultado, string username, string TwitterConsumerKey = "8T90BKQKn6m3onMZqRMSkTliF", string TwitterConsumerSecret = "20JCkeUiJlAze7rUmoHgwdGUwXItgLess93bRI8DRpgpDdGPML")
+        public bool obtenerTokenTwitter(ref string resultado, string username, formTwitter form, string TwitterConsumerKey = "8T90BKQKn6m3onMZqRMSkTliF", string TwitterConsumerSecret = "20JCkeUiJlAze7rUmoHgwdGUwXItgLess93bRI8DRpgpDdGPML")
         {
             try
             {
-
-                string text = System.IO.File.ReadAllText(@"C:\\Users\\eulis\\Desktop\\acces.txt");
-                var accounts = Convert.ToString(text).Split(new string[] { "</b>" }, StringSplitOptions.None);
+                
+                string text = System.IO.File.ReadAllText(form.txtRutaCuenta.Text+"\\acces.txt");
+                var accounts = Convert.ToString(text).Split(new string[] { "</tweet>" }, StringSplitOptions.None);
                 int i = 0;
                 int j = 0;
                 foreach (var account in accounts)

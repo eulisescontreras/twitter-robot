@@ -87,23 +87,16 @@ namespace GestiónSeguidoresTwitter
 
         private void btConectarTwitter_Click(object sender, EventArgs e)
         {
-      
-           /* ListFollowersOptions options = new ListFollowersOptions();
-            options.UserId = tuSelf.Id;
-            options.ScreenName = tuSelf.ScreenName;
-            options.IncludeUserEntities = true;
-            options.SkipStatus = false;
-            options.Cursor = -1;
-            IEnumerable<TwitterUser> mentions = service.ListFollowers();*/
 
             string resultado = "";
-            if (tareasTwitter[i].obtenerTokenTwitter(ref resultado,txtUsuarioAccesoTwitter.Text))
+            if (tareasTwitter[i].obtenerTokenTwitter(ref resultado,txtUsuarioAccesoTwitter.Text,this))
             {
                 btObtenerDatosPerfil.Enabled = true;
                 btPerfilVisitarURL.Enabled = true;
                 tabListadeTweetsAutomatizados.Enabled = true;
                 btObtenerDatosPerfil.Text = "Obtener datos del perfil @" +
                     txtUsuarioAccesoTwitter.Text;
+                txtRutaCuenta.Enabled = false;
 
             }
             else
@@ -1037,7 +1030,7 @@ namespace GestiónSeguidoresTwitter
            Encriptar encriptar = new Encriptar();
             guardarConfig.guardarValorConfiguracion("BD.Contraseña",
                           encriptar.cifrarTextoAES(txtBDSQLite.Text,
-                          "AjpdSoft_Frase_Encriptado", "AjpdSoft_Frase_Encriptado",
+                          "Sion_Frase_Encriptado", "Sion_Frase_Encriptado",
                           "MD5", 22, "1234567891234567", 128));
             guardarConfig.guardarValorConfiguracion("Tweet.Tweet",
                txtTweet.Text);
@@ -1088,7 +1081,7 @@ namespace GestiónSeguidoresTwitter
                 txtBDSQLite.Text =
                     encriptar.descifrarTextoAES(
                       guardarConfig.leerValorConfiguracion("BD.Contraseña"),
-                      "AjpdSoft_Frase_Encriptado", "AjpdSoft_Frase_Encriptado",
+                      "Sion_Frase_Encriptado", "Sion_Frase_Encriptado",
                       "MD5", 22, "1234567891234567", 128);
                 txtTweet.Text =
                     guardarConfig.leerValorConfiguracion("Tweet.Tweet");
@@ -1562,7 +1555,7 @@ namespace GestiónSeguidoresTwitter
             var tweetVideos = new List<List<string>>();
             string[] tweetssAux;
 
-            if (Convert.ToString(textBoxTweet.Text).Split(new string[] { "</b>" }, StringSplitOptions.None).Length <= 1)
+            if (Convert.ToString(textBoxTweet.Text).Split(new string[] { "</tweet>" }, StringSplitOptions.None).Length <= 1)
             {
                 var valor = tweets.Find(x => x.Tweet == Convert.ToString(textBoxTweet.Text));
 
@@ -1602,7 +1595,7 @@ namespace GestiónSeguidoresTwitter
             {
                 tweetss = new List<string>();
                 var i = 0;
-                tweetssAux = Convert.ToString(textBoxTweet.Text).Split(new string[] { "</b>" }, StringSplitOptions.None);
+                tweetssAux = Convert.ToString(textBoxTweet.Text).Split(new string[] { "</tweet>" }, StringSplitOptions.None);
                 foreach (var tweet in tweetssAux)
                 {
                     tweetss.Add(tweet.Split(new string[] { "</imagen>" }, StringSplitOptions.None)[0]);
@@ -2120,6 +2113,15 @@ namespace GestiónSeguidoresTwitter
                 AgregarTweets();
                 textBoxTweet.Text = "";
             }
+        }
+
+        private void txtRutaCuenta_TextChanged(object sender, EventArgs e)
+        {
+            if(txtRutaCuenta.Text == "")
+            {
+                txtUsuarioAccesoTwitter.Enabled = false;
+            }else
+                txtUsuarioAccesoTwitter.Enabled = true;
         }
     }
 }

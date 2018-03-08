@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // La información general sobre un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos atributos para modificar la información
 // asociada con un ensamblado.
-[assembly: AssemblyTitle("AjpdSoft Gestión Seguidores Twitter")]
-[assembly: AssemblyDescription("AjpdSoft Gestión Seguidores Twitter")]
+[assembly: AssemblyTitle("Sion Tweet Bot")]
+[assembly: AssemblyDescription("Sion Tweet Bot")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("AjpdSoft")]
-[assembly: AssemblyProduct("AjpdSoft Gestión Seguidores Twitter")]
+[assembly: AssemblyCompany("Sion")]
+[assembly: AssemblyProduct("Sion Tweet Bot")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
-[assembly: AssemblyTrademark("http://www.ajpdsoft.com")]
+[assembly: AssemblyTrademark("http://www.sion.com")]
 [assembly: AssemblyCulture("")]
 
 // Si establece ComVisible como false, los tipos de este ensamblado no estarán visibles 

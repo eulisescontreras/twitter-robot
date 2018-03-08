@@ -161,6 +161,7 @@
             this.lsSeguidoresTodos = new System.Windows.Forms.ListView();
             this.btTest = new System.Windows.Forms.Button();
             this.tabTweetsAutomatizados = new System.Windows.Forms.TabPage();
+            this.subirArchivo = new System.Windows.Forms.Button();
             this.listViewTweetsAutomatizados = new System.Windows.Forms.ListView();
             this.textBoxTweet = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -220,7 +221,8 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
-            this.subirArchivo = new System.Windows.Forms.Button();
+            this.label42 = new System.Windows.Forms.Label();
+            this.txtRutaCuenta = new System.Windows.Forms.TextBox();
             this.tabListadeTweetsAutomatizados.SuspendLayout();
             this.tabInfoPerfil.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -287,10 +289,10 @@
             this.tabListadeTweetsAutomatizados.Controls.Add(this.ListadeCuentas);
             this.tabListadeTweetsAutomatizados.Controls.Add(this.tabConfiguracion);
             this.tabListadeTweetsAutomatizados.Enabled = false;
-            this.tabListadeTweetsAutomatizados.Location = new System.Drawing.Point(12, 68);
+            this.tabListadeTweetsAutomatizados.Location = new System.Drawing.Point(12, 94);
             this.tabListadeTweetsAutomatizados.Name = "tabListadeTweetsAutomatizados";
             this.tabListadeTweetsAutomatizados.SelectedIndex = 0;
-            this.tabListadeTweetsAutomatizados.Size = new System.Drawing.Size(855, 536);
+            this.tabListadeTweetsAutomatizados.Size = new System.Drawing.Size(855, 510);
             this.tabListadeTweetsAutomatizados.TabIndex = 1;
             // 
             // tabInfoPerfil
@@ -1812,6 +1814,16 @@
             this.tabTweetsAutomatizados.Text = "Lista de Tweets Automatizados";
             this.tabTweetsAutomatizados.UseVisualStyleBackColor = true;
             // 
+            // subirArchivo
+            // 
+            this.subirArchivo.Location = new System.Drawing.Point(559, 464);
+            this.subirArchivo.Name = "subirArchivo";
+            this.subirArchivo.Size = new System.Drawing.Size(247, 40);
+            this.subirArchivo.TabIndex = 9;
+            this.subirArchivo.Text = "Subir Archivo";
+            this.subirArchivo.UseVisualStyleBackColor = true;
+            this.subirArchivo.Click += new System.EventHandler(this.subirArchivo_Click);
+            // 
             // listViewTweetsAutomatizados
             // 
             this.listViewTweetsAutomatizados.Location = new System.Drawing.Point(0, 0);
@@ -1899,7 +1911,7 @@
             this.ListadeCuentas.Location = new System.Drawing.Point(4, 22);
             this.ListadeCuentas.Name = "ListadeCuentas";
             this.ListadeCuentas.Padding = new System.Windows.Forms.Padding(3);
-            this.ListadeCuentas.Size = new System.Drawing.Size(847, 510);
+            this.ListadeCuentas.Size = new System.Drawing.Size(847, 484);
             this.ListadeCuentas.TabIndex = 9;
             this.ListadeCuentas.Text = "Lista de cuentas";
             this.ListadeCuentas.UseVisualStyleBackColor = true;
@@ -2068,7 +2080,7 @@
             this.tabConfiguracion.Location = new System.Drawing.Point(4, 22);
             this.tabConfiguracion.Name = "tabConfiguracion";
             this.tabConfiguracion.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfiguracion.Size = new System.Drawing.Size(847, 510);
+            this.tabConfiguracion.Size = new System.Drawing.Size(847, 484);
             this.tabConfiguracion.TabIndex = 6;
             this.tabConfiguracion.Text = "Configuración";
             this.tabConfiguracion.UseVisualStyleBackColor = true;
@@ -2232,13 +2244,15 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label42);
+            this.groupBox1.Controls.Add(this.txtRutaCuenta);
             this.groupBox1.Controls.Add(this.label20);
             this.groupBox1.Controls.Add(this.txtUsuarioAccesoTwitter);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.btConectarTwitter);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(855, 47);
+            this.groupBox1.Size = new System.Drawing.Size(855, 76);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -2247,7 +2261,7 @@
             this.label20.AutoSize = true;
             this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label20.ForeColor = System.Drawing.Color.DarkRed;
-            this.label20.Location = new System.Drawing.Point(376, 21);
+            this.label20.Location = new System.Drawing.Point(380, 21);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(470, 13);
             this.label20.TabIndex = 15;
@@ -2256,9 +2270,10 @@
             // 
             // txtUsuarioAccesoTwitter
             // 
-            this.txtUsuarioAccesoTwitter.Location = new System.Drawing.Point(57, 19);
+            this.txtUsuarioAccesoTwitter.Enabled = false;
+            this.txtUsuarioAccesoTwitter.Location = new System.Drawing.Point(95, 19);
             this.txtUsuarioAccesoTwitter.Name = "txtUsuarioAccesoTwitter";
-            this.txtUsuarioAccesoTwitter.Size = new System.Drawing.Size(162, 20);
+            this.txtUsuarioAccesoTwitter.Size = new System.Drawing.Size(143, 20);
             this.txtUsuarioAccesoTwitter.TabIndex = 0;
             // 
             // label7
@@ -2272,9 +2287,9 @@
             // 
             // btConectarTwitter
             // 
-            this.btConectarTwitter.Location = new System.Drawing.Point(222, 15);
+            this.btConectarTwitter.Location = new System.Drawing.Point(240, 15);
             this.btConectarTwitter.Name = "btConectarTwitter";
-            this.btConectarTwitter.Size = new System.Drawing.Size(151, 27);
+            this.btConectarTwitter.Size = new System.Drawing.Size(139, 27);
             this.btConectarTwitter.TabIndex = 1;
             this.btConectarTwitter.Text = "Conectar con Twitter";
             this.btConectarTwitter.UseVisualStyleBackColor = true;
@@ -2288,7 +2303,7 @@
             // dlAbrirFichero
             // 
             this.dlAbrirFichero.DefaultExt = "sqlite";
-            this.dlAbrirFichero.FileName = "twitter_ajpdsoft";
+            this.dlAbrirFichero.FileName = "twitter_sion";
             // 
             // be
             // 
@@ -2313,7 +2328,7 @@
             // 
             this.iconizarApp.ContextMenuStrip = this.mnuContextual;
             this.iconizarApp.Icon = ((System.Drawing.Icon)(resources.GetObject("iconizarApp.Icon")));
-            this.iconizarApp.Text = "AjpdSoft";
+            this.iconizarApp.Text = "Sion";
             this.iconizarApp.DoubleClick += new System.EventHandler(this.mnuMostrarAplicacion_Click);
             // 
             // mnuContextual
@@ -2381,15 +2396,22 @@
             this.timer3.Interval = 30000;
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
-            // subirArchivo
+            // label42
             // 
-            this.subirArchivo.Location = new System.Drawing.Point(559, 464);
-            this.subirArchivo.Name = "subirArchivo";
-            this.subirArchivo.Size = new System.Drawing.Size(247, 40);
-            this.subirArchivo.TabIndex = 9;
-            this.subirArchivo.Text = "Subir Archivo";
-            this.subirArchivo.UseVisualStyleBackColor = true;
-            this.subirArchivo.Click += new System.EventHandler(this.subirArchivo_Click);
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(7, 48);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(86, 13);
+            this.label42.TabIndex = 29;
+            this.label42.Text = "Ruta de cuentas";
+            // 
+            // txtRutaCuenta
+            // 
+            this.txtRutaCuenta.Location = new System.Drawing.Point(95, 48);
+            this.txtRutaCuenta.Name = "txtRutaCuenta";
+            this.txtRutaCuenta.Size = new System.Drawing.Size(143, 20);
+            this.txtRutaCuenta.TabIndex = 28;
+            this.txtRutaCuenta.TextChanged += new System.EventHandler(this.txtRutaCuenta_TextChanged);
             // 
             // formTwitter
             // 
@@ -2403,7 +2425,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "formTwitter";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "AjpdSoft Gestión Seguidores Twitter";
+            this.Text = "Sion Tweet Bot";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.formTwitter_FormClosed);
             this.Load += new System.EventHandler(this.formTwitter_Load);
             this.Resize += new System.EventHandler(this.formTwitter_Resize);
@@ -2654,6 +2676,8 @@
         private System.Windows.Forms.CheckBox yesAutorice;
         private System.Windows.Forms.Label Autorizado;
         private System.Windows.Forms.Button subirArchivo;
+        private System.Windows.Forms.Label label42;
+        public System.Windows.Forms.TextBox txtRutaCuenta;
     }
 }
 
