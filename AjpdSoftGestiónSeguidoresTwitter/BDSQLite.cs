@@ -14,7 +14,7 @@ namespace GestiónSeguidoresTwitter
         public SQLiteConnection conexionSQLite;
 
         //crear la BD SQLite y las tablas para guardar datos de Twitter
-        public void crearBDSQLite (string fichero, string contrasena, ref string resultado)
+        public void crearBDSQLite (string fichero, string contrasena, ref string resultado, formTwitter form)
         {     
             try
             {
@@ -85,6 +85,60 @@ namespace GestiónSeguidoresTwitter
                         comandoSQL.CommandType = CommandType.Text;
                         comandoSQL.ExecuteNonQuery();
 
+                        foreach (string username in form.listUsers)
+                        {
+                            if (username != form.txtUsuarioAccesoTwitter.Text)
+                            { 
+                                consultaSQL =
+                                     "insert into cuentas (id,usuario,status,fecha,state,seguir,favoritos,autorizar) values ((select count(*) from cuentas),@usuario,@status,@fecha,@state,@seguir,@favoritos,@autorizar)";
+                                SQLiteParameter parametroUsuario = new SQLiteParameter();
+                                parametroUsuario.ParameterName = "@usuario";
+                                parametroUsuario.DbType = DbType.String;
+                                parametroUsuario.Value = Convert.ToString(username);
+
+                                SQLiteParameter parametroStatus = new SQLiteParameter();
+                                parametroStatus.ParameterName = "@status";
+                                parametroStatus.DbType = DbType.String;
+                                parametroStatus.Value = Convert.ToString(1);
+
+                                SQLiteParameter parameterFecha = new SQLiteParameter();
+                                parameterFecha.ParameterName = "@fecha";
+                                parameterFecha.DbType = DbType.DateTime;
+                                parameterFecha.Value = DateTime.Now;
+
+                                SQLiteParameter parametroState = new SQLiteParameter();
+                                parametroState.ParameterName = "@state";
+                                parametroState.DbType = DbType.Int32;
+                                parametroState.Value = Convert.ToInt32("1");
+
+                                SQLiteParameter parametroSeguir = new SQLiteParameter();
+                                parametroSeguir.ParameterName = "@seguir";
+                                parametroSeguir.DbType = DbType.Int32;
+                                parametroSeguir.Value = Convert.ToInt32("0");
+
+                                SQLiteParameter parametroFavoritos = new SQLiteParameter();
+                                parametroFavoritos.ParameterName = "@favoritos";
+                                parametroFavoritos.DbType = DbType.Int32;
+                                parametroFavoritos.Value = Convert.ToInt32("1");
+
+                                SQLiteParameter parametroAutorizar = new SQLiteParameter();
+                                parametroAutorizar.ParameterName = "@autorizar";
+                                parametroAutorizar.DbType = DbType.Int32;
+                                parametroAutorizar.Value = Convert.ToInt32("1");
+
+                                comandoSQL =
+                                     new SQLiteCommand(consultaSQL, conexionSQLite);
+                                comandoSQL.CommandType = CommandType.Text;
+                                comandoSQL.Parameters.Add(parametroUsuario);
+                                comandoSQL.Parameters.Add(parametroStatus);
+                                comandoSQL.Parameters.Add(parameterFecha);
+                                comandoSQL.Parameters.Add(parametroState);
+                                comandoSQL.Parameters.Add(parametroSeguir);
+                                comandoSQL.Parameters.Add(parametroFavoritos);
+                                comandoSQL.Parameters.Add(parametroAutorizar);
+                                comandoSQL.ExecuteNonQuery();
+                            }
+                        }
                         resultado = System.DateTime.Now + " " +
                             "BD SQLite creada correctamente.";
                     }

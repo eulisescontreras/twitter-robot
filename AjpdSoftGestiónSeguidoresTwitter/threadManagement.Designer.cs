@@ -36,19 +36,19 @@
             // 
             // textBoxNroThread
             // 
-            this.textBoxNroThread.Location = new System.Drawing.Point(248, 39);
+            this.textBoxNroThread.Location = new System.Drawing.Point(146, 39);
             this.textBoxNroThread.Name = "textBoxNroThread";
-            this.textBoxNroThread.Size = new System.Drawing.Size(70, 20);
+            this.textBoxNroThread.Size = new System.Drawing.Size(287, 20);
             this.textBoxNroThread.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(143, 42);
+            this.label1.Location = new System.Drawing.Point(63, 42);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(66, 13);
+            this.label1.Size = new System.Drawing.Size(67, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Nro Cuentas";
+            this.label1.Text = "URL Access";
             // 
             // initManagement
             // 

@@ -221,8 +221,6 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
-            this.label42 = new System.Windows.Forms.Label();
-            this.txtRutaCuenta = new System.Windows.Forms.TextBox();
             this.tabListadeTweetsAutomatizados.SuspendLayout();
             this.tabInfoPerfil.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -265,7 +263,7 @@
             // 
             this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Location = new System.Drawing.Point(16, 610);
+            this.txtLog.Location = new System.Drawing.Point(16, 614);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -302,7 +300,7 @@
             this.tabInfoPerfil.Location = new System.Drawing.Point(4, 22);
             this.tabInfoPerfil.Name = "tabInfoPerfil";
             this.tabInfoPerfil.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfoPerfil.Size = new System.Drawing.Size(847, 510);
+            this.tabInfoPerfil.Size = new System.Drawing.Size(847, 484);
             this.tabInfoPerfil.TabIndex = 0;
             this.tabInfoPerfil.Text = "Información perfil Twitter";
             this.tabInfoPerfil.UseVisualStyleBackColor = true;
@@ -574,7 +572,7 @@
             this.tabMensajes.Location = new System.Drawing.Point(4, 22);
             this.tabMensajes.Name = "tabMensajes";
             this.tabMensajes.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMensajes.Size = new System.Drawing.Size(847, 510);
+            this.tabMensajes.Size = new System.Drawing.Size(847, 484);
             this.tabMensajes.TabIndex = 1;
             this.tabMensajes.Text = "Mensajes directos";
             this.tabMensajes.UseVisualStyleBackColor = true;
@@ -633,7 +631,7 @@
             this.tabSeguidores.Location = new System.Drawing.Point(4, 22);
             this.tabSeguidores.Name = "tabSeguidores";
             this.tabSeguidores.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSeguidores.Size = new System.Drawing.Size(847, 510);
+            this.tabSeguidores.Size = new System.Drawing.Size(847, 484);
             this.tabSeguidores.TabIndex = 2;
             this.tabSeguidores.Text = "Seguidores";
             this.tabSeguidores.UseVisualStyleBackColor = true;
@@ -703,7 +701,7 @@
             this.tabSiguiendo.Location = new System.Drawing.Point(4, 22);
             this.tabSiguiendo.Name = "tabSiguiendo";
             this.tabSiguiendo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSiguiendo.Size = new System.Drawing.Size(847, 510);
+            this.tabSiguiendo.Size = new System.Drawing.Size(847, 484);
             this.tabSiguiendo.TabIndex = 3;
             this.tabSiguiendo.Text = "Siguiendo";
             this.tabSiguiendo.UseVisualStyleBackColor = true;
@@ -770,7 +768,7 @@
             this.tabTwitter.Location = new System.Drawing.Point(4, 22);
             this.tabTwitter.Name = "tabTwitter";
             this.tabTwitter.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTwitter.Size = new System.Drawing.Size(847, 510);
+            this.tabTwitter.Size = new System.Drawing.Size(847, 484);
             this.tabTwitter.TabIndex = 4;
             this.tabTwitter.Text = "Tweet";
             this.tabTwitter.UseVisualStyleBackColor = true;
@@ -1115,7 +1113,7 @@
             this.tabTareasAutomaticas.Location = new System.Drawing.Point(4, 22);
             this.tabTareasAutomaticas.Name = "tabTareasAutomaticas";
             this.tabTareasAutomaticas.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTareasAutomaticas.Size = new System.Drawing.Size(847, 510);
+            this.tabTareasAutomaticas.Size = new System.Drawing.Size(847, 484);
             this.tabTareasAutomaticas.TabIndex = 5;
             this.tabTareasAutomaticas.Text = "Tareas automáticas";
             this.tabTareasAutomaticas.UseVisualStyleBackColor = true;
@@ -1667,7 +1665,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(847, 510);
+            this.tabPage1.Size = new System.Drawing.Size(847, 484);
             this.tabPage1.TabIndex = 7;
             this.tabPage1.Text = "Dejar de seguir a quien no te sigue";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -1809,14 +1807,14 @@
             this.tabTweetsAutomatizados.Location = new System.Drawing.Point(4, 22);
             this.tabTweetsAutomatizados.Name = "tabTweetsAutomatizados";
             this.tabTweetsAutomatizados.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTweetsAutomatizados.Size = new System.Drawing.Size(847, 510);
+            this.tabTweetsAutomatizados.Size = new System.Drawing.Size(847, 484);
             this.tabTweetsAutomatizados.TabIndex = 8;
             this.tabTweetsAutomatizados.Text = "Lista de Tweets Automatizados";
             this.tabTweetsAutomatizados.UseVisualStyleBackColor = true;
             // 
             // subirArchivo
             // 
-            this.subirArchivo.Location = new System.Drawing.Point(559, 464);
+            this.subirArchivo.Location = new System.Drawing.Point(559, 438);
             this.subirArchivo.Name = "subirArchivo";
             this.subirArchivo.Size = new System.Drawing.Size(247, 40);
             this.subirArchivo.TabIndex = 9;
@@ -1843,7 +1841,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(559, 360);
+            this.button1.Location = new System.Drawing.Point(559, 334);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(116, 46);
             this.button1.TabIndex = 6;
@@ -1853,7 +1851,7 @@
             // 
             // ButtonEliminar
             // 
-            this.ButtonEliminar.Location = new System.Drawing.Point(559, 412);
+            this.ButtonEliminar.Location = new System.Drawing.Point(559, 386);
             this.ButtonEliminar.Name = "ButtonEliminar";
             this.ButtonEliminar.Size = new System.Drawing.Size(116, 46);
             this.ButtonEliminar.TabIndex = 5;
@@ -1863,7 +1861,7 @@
             // 
             // ButtonEditar
             // 
-            this.ButtonEditar.Location = new System.Drawing.Point(690, 412);
+            this.ButtonEditar.Location = new System.Drawing.Point(690, 386);
             this.ButtonEditar.Name = "ButtonEditar";
             this.ButtonEditar.Size = new System.Drawing.Size(116, 46);
             this.ButtonEditar.TabIndex = 4;
@@ -1873,7 +1871,7 @@
             // 
             // ButtonAgregar
             // 
-            this.ButtonAgregar.Location = new System.Drawing.Point(690, 360);
+            this.ButtonAgregar.Location = new System.Drawing.Point(690, 334);
             this.ButtonAgregar.Name = "ButtonAgregar";
             this.ButtonAgregar.Size = new System.Drawing.Size(116, 46);
             this.ButtonAgregar.TabIndex = 3;
@@ -2244,8 +2242,6 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.label42);
-            this.groupBox1.Controls.Add(this.txtRutaCuenta);
             this.groupBox1.Controls.Add(this.label20);
             this.groupBox1.Controls.Add(this.txtUsuarioAccesoTwitter);
             this.groupBox1.Controls.Add(this.label7);
@@ -2270,7 +2266,6 @@
             // 
             // txtUsuarioAccesoTwitter
             // 
-            this.txtUsuarioAccesoTwitter.Enabled = false;
             this.txtUsuarioAccesoTwitter.Location = new System.Drawing.Point(95, 19);
             this.txtUsuarioAccesoTwitter.Name = "txtUsuarioAccesoTwitter";
             this.txtUsuarioAccesoTwitter.Size = new System.Drawing.Size(143, 20);
@@ -2395,23 +2390,6 @@
             // 
             this.timer3.Interval = 30000;
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
-            // 
-            // label42
-            // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(7, 48);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(86, 13);
-            this.label42.TabIndex = 29;
-            this.label42.Text = "Ruta de cuentas";
-            // 
-            // txtRutaCuenta
-            // 
-            this.txtRutaCuenta.Location = new System.Drawing.Point(95, 48);
-            this.txtRutaCuenta.Name = "txtRutaCuenta";
-            this.txtRutaCuenta.Size = new System.Drawing.Size(143, 20);
-            this.txtRutaCuenta.TabIndex = 28;
-            this.txtRutaCuenta.TextChanged += new System.EventHandler(this.txtRutaCuenta_TextChanged);
             // 
             // formTwitter
             // 
@@ -2676,8 +2654,6 @@
         private System.Windows.Forms.CheckBox yesAutorice;
         private System.Windows.Forms.Label Autorizado;
         private System.Windows.Forms.Button subirArchivo;
-        private System.Windows.Forms.Label label42;
-        public System.Windows.Forms.TextBox txtRutaCuenta;
     }
 }
 

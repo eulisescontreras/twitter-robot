@@ -81,39 +81,26 @@ namespace GestiónSeguidoresTwitter
 
         //Conectar con API de Twitter mediante PIN para obtener token de acceso
         //devuelve true si la conexión se ha realizado correctamente
-        public bool obtenerTokenTwitter(ref string resultado, string username, formTwitter form, string TwitterConsumerKey = "8T90BKQKn6m3onMZqRMSkTliF", string TwitterConsumerSecret = "20JCkeUiJlAze7rUmoHgwdGUwXItgLess93bRI8DRpgpDdGPML")
+        public bool obtenerTokenTwitter(ref string resultado, formTwitter form)
         {
             try
             {
                 
-                string text = System.IO.File.ReadAllText(form.txtRutaCuenta.Text+"\\acces.txt");
-                var accounts = Convert.ToString(text).Split(new string[] { "</tweet>" }, StringSplitOptions.None);
-                int i = 0;
-                int j = 0;
-                foreach (var account in accounts)
-                {
-                    if ((account.Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? account.Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] : account.Split(new string[] { "\r\n" }, StringSplitOptions.None)[1]).Split(new string[] { "username:" }, StringSplitOptions.None)[1] == username)
-                    {
-                        j = i;
-                    }
-                    i++;
-                }
-
                 var auth = new SingleUserAuthorizer
                 {
                     CredentialStore = new SingleUserInMemoryCredentialStore
                     {
-                        ConsumerKey = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[1] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[2]).Split(new string[] { "Consumer Key:" }, StringSplitOptions.None)[1],
-                        ConsumerSecret = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[2] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[3]).Split(new string[] { "Consumer Secret:" }, StringSplitOptions.None)[1],
-                        AccessToken = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[3] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[4]).Split(new string[] { "Access Token:" }, StringSplitOptions.None)[1],
-                        AccessTokenSecret = (accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[0] != "" ? accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[4] : accounts[j].Split(new string[] { "\r\n" }, StringSplitOptions.None)[5]).Split(new string[] { "Access Token Secret:" }, StringSplitOptions.None)[1]
+                        ConsumerKey = form.consumer_key,
+                        ConsumerSecret = form.consumer_secret,
+                        AccessToken = form.access_token,
+                        AccessTokenSecret = form.access_token_secret
                     }
                 };
 
                 context = new TwitterContext(auth);
 
                 TwitterServiceProvider twitterServiceProvider =
-                    new TwitterServiceProvider(TwitterConsumerKey, TwitterConsumerSecret);
+                    new TwitterServiceProvider(form.consumer_key, form.consumer_secret);
                 // Autenticación en Twitter usando código PIN
                 OAuthToken oauthToken =
                      twitterServiceProvider.OAuthOperations.FetchRequestTokenAsync("oob", null).Result;
@@ -820,8 +807,8 @@ namespace GestiónSeguidoresTwitter
                 {
                     try
                     {
-                        await twitter.TimelineOperations.AddToFavoritesAsync(aux.ID);
-                        await twitter.TimelineOperations.RetweetAsync(aux.ID);
+                        if(aux.IsFavoritedByUser)
+                            await twitter.TimelineOperations.RetweetAsync(aux.ID);
                     }
                     catch (Exception ex)
                     {
@@ -833,7 +820,31 @@ namespace GestiónSeguidoresTwitter
             {
 
             }
-}
+        }
+
+        public async void DeleteToFavoriteAndRetweet(string username, formTwitter form)
+        {
+            try
+            {
+                IList<Tweet> tweets = await twitter.TimelineOperations.GetUserTimelineAsync(username);
+                foreach (Tweet aux in tweets)
+                {
+                    try
+                    {
+                        if (aux.IsFavoritedByUser && aux.IsRetweetedByUser)
+                            await twitter.TimelineOperations.DeleteStatusAsync(aux.ID);
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         public void generarRetweetFavoritos(List<Cuentas> cuentas, formTwitter form)
         {
@@ -858,6 +869,7 @@ namespace GestiónSeguidoresTwitter
                         }
                         else if (cuentas[i].Status == 0 && cuentas[i].State == 1)
                         {
+                            this.DeleteToFavoriteAndRetweet(cuentas[i].Username, form);
                             //this.UnFollow(cuentas[i].Username, form);
                             cuentas[i].Status = 1;
                             form.bdSQLite.updateStatusSeguidores(cuentas[i], ref resultado);

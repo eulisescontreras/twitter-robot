@@ -26,15 +26,28 @@ namespace GestiónSeguidoresTwitter
         public bool executeIntervalTweets = false;
         public bool executeIntervalSeguidores = false;
         public bool executeIntervalRetweetsFavoritos = false;
+        public string username;
+        public string consumer_key; 
+        public string consumer_secret; 
+        public string access_token; 
+        public string access_token_secret;
+        public List<string> listUsers;
 
         private void cerrarAplicacion()
         {
             Application.Exit();
         }
 
-        public formTwitter()
+        public formTwitter(List<string> listUsers, string username, string consumer_key, string consumer_secret, string access_token, string access_token_secret)
         {
             InitializeComponent();
+            txtUsuarioAccesoTwitter.Text = username;
+            this.username = username;
+            this.consumer_key = consumer_key;
+            this.consumer_secret = consumer_secret;
+            this.access_token = access_token;
+            this.access_token_secret = access_token_secret;
+            this.listUsers = new List<string>(listUsers); ;
         }
 
         private void btEliminarMensajeDirecto_Click(object sender, EventArgs e)
@@ -89,14 +102,15 @@ namespace GestiónSeguidoresTwitter
         {
 
             string resultado = "";
-            if (tareasTwitter[i].obtenerTokenTwitter(ref resultado,txtUsuarioAccesoTwitter.Text,this))
+            txtUsuarioAccesoTwitter.Visible = true;
+            txtUsuarioAccesoTwitter.Text = username;
+            if (tareasTwitter[i].obtenerTokenTwitter(ref resultado, this))
             {
                 btObtenerDatosPerfil.Enabled = true;
                 btPerfilVisitarURL.Enabled = true;
                 tabListadeTweetsAutomatizados.Enabled = true;
                 btObtenerDatosPerfil.Text = "Obtener datos del perfil @" +
                     txtUsuarioAccesoTwitter.Text;
-                txtRutaCuenta.Enabled = false;
 
             }
             else
@@ -655,7 +669,7 @@ namespace GestiónSeguidoresTwitter
         {
                 string resultado = "";
                 bdSQLite.crearBDSQLite(txtBDSQLite.Text, 
-                    txtBDSQLiteContrasena.Text, ref resultado);
+                    txtBDSQLiteContrasena.Text, ref resultado, this);
                 txtLog.Text = resultado +
                     Environment.NewLine + txtLog.Text;
         }
@@ -2114,14 +2128,6 @@ namespace GestiónSeguidoresTwitter
                 textBoxTweet.Text = "";
             }
         }
-
-        private void txtRutaCuenta_TextChanged(object sender, EventArgs e)
-        {
-            if(txtRutaCuenta.Text == "")
-            {
-                txtUsuarioAccesoTwitter.Enabled = false;
-            }else
-                txtUsuarioAccesoTwitter.Enabled = true;
-        }
+        
     }
 }

@@ -40,3 +40,6 @@ C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguido
 C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\obj\x64\Release\AjpdSoftSeguidoresTwitter.exe
 C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\obj\x64\Release\AjpdSoftSeguidoresTwitter.pdb
 C:\Users\eulis\Desktop\AjpdSoftGestiónSeguidoresTwitter\AjpdSoftGestiónSeguidoresTwitter\obj\x64\Release\SionTweetBot.csprojResolveAssemblyReference.cache
+C:\Users\eulis\Desktop\twitter-robot\AjpdSoftGestiónSeguidoresTwitter\bin\x64\Release\AjpdSoftSeguidoresTwitter.exe.config
+C:\Users\eulis\Desktop\twitter-robot\AjpdSoftGestiónSeguidoresTwitter\obj\x64\Release\AjpdSoftSeguidoresTwitter.exe
+C:\Users\eulis\Desktop\twitter-robot\AjpdSoftGestiónSeguidoresTwitter\obj\x64\Release\AjpdSoftSeguidoresTwitter.pdb
